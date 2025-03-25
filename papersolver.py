@@ -122,7 +122,8 @@ class PaperReplace(Command):
 
     def parse_command(self, *args) -> tuple:
         new_latex = extract_prompt(args[0], "REPLACE")
-        latex_ret = compile_latex(new_latex, compile=args[1])
+        save_loc = args[2] if len(args) > 2 else "."
+        latex_ret = compile_latex(new_latex, save_loc, compile=args[1])
         if "[CODE EXECUTION ERROR]" in latex_ret: return False, (None, latex_ret,)
         return True, (new_latex.split("\n"), latex_ret)
 
@@ -157,7 +158,8 @@ class PaperEdit(Command):
                 current_latex.insert(args[0], _line)
             new_latex = "\n".join(current_latex)
             latex_exec = f"{new_latex}"
-            latex_ret = compile_latex(latex_exec, compile=args[4])
+            save_loc = args[5] if len(args) > 5 else "."
+            latex_ret = compile_latex(latex_exec, save_loc, compile=args[4])
             if "error" in latex_ret.lower(): return (False, None, latex_ret)
             return (True, current_latex, latex_ret)
         except Exception as e:
@@ -208,7 +210,7 @@ Please make sure the abstract reads smoothly and is well-motivated. This should 
 """,
     "related work": """
 - Academic siblings of our work, i.e. alternative attempts in literature at trying to solve the same problem. 
-- Goal is to “Compare and contrast” - how does their approach differ in either assumptions or method? If their method is applicable to our Problem Setting I expect a comparison in the experimental section. If not, there needs to be a clear statement why a given method is not applicable. 
+- Goal is to "Compare and contrast" - how does their approach differ in either assumptions or method? If their method is applicable to our Problem Setting I expect a comparison in the experimental section. If not, there needs to be a clear statement why a given method is not applicable. 
 - Note: Just describing what another paper is doing is not enough. We need to compare and contrast.
 """,
     "background": """
@@ -243,7 +245,7 @@ Please make sure the abstract reads smoothly and is well-motivated. This should 
 }
 
 class PaperSolver:
-    def __init__(self, llm_str, notes=None, max_steps=10, insights=None, plan=None, exp_code=None, exp_results=None, lit_review=None, ref_papers=None, topic=None, openai_api_key=None, compile_pdf=True):
+    def __init__(self, llm_str, notes=None, max_steps=10, insights=None, plan=None, exp_code=None, exp_results=None, lit_review=None, ref_papers=None, topic=None, openai_api_key=None, compile_pdf=True, save_loc=None):
         if notes is None: self.notes = []
         else: self.notes = notes
         if plan is None: self.plan = ""
@@ -260,6 +262,8 @@ class PaperSolver:
         else: self.ref_papers = ref_papers
         if topic is None: self.topic = ""
         else: self.topic = topic
+        if save_loc is None: self.save_loc = "."
+        else: self.save_loc = save_loc
         self.compile_pdf = compile_pdf
         self.llm_str = llm_str
         self.notes = notes
@@ -431,7 +435,7 @@ class PaperSolver:
                     paper_err = f"Return from executing latex: {args[1]}"
                     if success:
                         # True, current_latex, latex_ret
-                        args = cmd.execute_command((args[0], args[1], paper_lines, args[3], self.compile_pdf))
+                        args = cmd.execute_command((args[0], args[1], paper_lines, args[3], self.compile_pdf, self.save_loc))
                         success = success and args[0]
                         if not success: pass
                         else:
@@ -442,36 +446,23 @@ class PaperSolver:
                                 score, cmd_str, is_valid = 0.0, "Paper scored successfully", True
                             if is_valid: failed = False
                             paper_err += f"\nReturn from executing latex: {cmd_str}"
-                        print("$$$$ PAPER EDIT (success)")
-                    if failed:
-                        cmd_str = f"Paper edit FAILED due to the following error: {paper_err}.  Paper was reverted back to original state before edits."
-                        print("$$$$ PAPER EDIT (failed)")
-                    else:
-                        cmd_str = "Paper was successfully edited."
-                        paper_lines = copy(args[1])
-                        prev_paper_ret = copy(args[2])
-                        print("$$$$ PAPER EDIT (success)")
+                            
+                    if failed: continue
+                    return paper_err, paper_lines, prev_paper_ret, score
+
                 elif cmd.cmd_type == "PAPER-replace": # DONE
-                    score = None
-                    failed = True
-                    success, args = cmd.parse_command(model_resp, self.compile_pdf)
-                    paper_err = f"Return from executing latex: {args[1]}"
-                    if success:
-                        paper_lines = copy(args[0]) #
-                        if scoring:
-                            score, cmd_str, is_valid = get_score(self.plan, "\n".join(paper_lines), reward_model_llm=self.llm_str)
-                        else:
-                            score, cmd_str, is_valid = 0.0, "Paper scored successfully", True
-                        if is_valid: failed = False
-                        paper_err += f"\nReturn from executing code on real test set {cmd_str}"
-                    if failed:
-                        cmd_str = f"Paper replacement FAILED due to the following error: {paper_err}.  Paper was reverted back to original state before edits."
-                        print("$$$$ PAPER REPLACE (failed)")
+                    success, args = cmd.parse_command(model_resp, self.compile_pdf, self.save_loc)
+                    if not success:
+                        paper_err = f"\nReturn from executing latex: {args[1]}"
+                        return paper_err, paper_lines, prev_paper_ret, None
+                    paper_lines = args[0]
+                    if scoring:
+                        score, cmd_str, is_valid = get_score(self.plan, "\n".join(paper_lines), reward_model_llm=self.llm_str)
                     else:
-                        cmd_str = "Paper was successfully replaced."
-                        paper_lines = copy(args[0])
-                        prev_paper_ret = copy(args[1])
-                        print("$$$$ PAPER REPLACE (success)")
+                        score, cmd_str, is_valid = 0.0, "Paper scored successfully", True
+                    if not is_valid: continue
+                    paper_err = f"\nReturn from executing latex: {cmd_str}"
+                    return paper_err, paper_lines, args[1], score
         return cmd_str, paper_lines, prev_paper_ret, score
 
     def generate_paper_lines(self, code):

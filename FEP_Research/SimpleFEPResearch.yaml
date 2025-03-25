@@ -1,0 +1,70 @@
+# If you want to have user input or be a human-in-the-loop
+copilot_mode: False
+
+# Research topic focusing on the Free Energy Principle
+research-topic: "Your goal is to develop a concise literature review and synthesis on the Free Energy Principle (FEP). Review two key papers on the topic and create a well-formatted, short review paper that explains the core concepts of FEP, its theoretical foundations, and its applications in cognitive science and neuroscience. The review should be accessible to readers with basic knowledge of computational neuroscience, include relevant mathematical formulations, and highlight key insights and limitations of the Free Energy Principle."
+
+# LLM configuration
+api-key: "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"
+# Agent Laboratory backend
+llm-backend: "gpt-4o-mini"
+# Literature review backend
+lit-review-backend: "gpt-4o-mini"
+
+# Base language
+language: "English"
+
+# Number of papers to review and write
+num-papers-lit-review: 2
+agentrxiv-papers: 1
+num-papers-to-write: 1
+parallel-labs: False
+
+# Lab configuration
+mlesolver-max-steps: 1
+papersolver-max-steps: 1
+lab-index: 1
+load-existing: False
+except-if-fail: False
+compile-latex: True
+
+# Output directory
+output-dir: "./FEP_Research"
+
+# Task notes
+task-notes:
+  plan-formulation:
+    - 'Develop a plan for a short, well-formatted review paper on the Free Energy Principle.'
+    - 'Identify the core concepts and mathematical foundations of the Free Energy Principle to cover.'
+    - 'Plan the structure of the review with appropriate sections (introduction, background, main concepts, applications, limitations, conclusion).'
+    - 'Determine how to present mathematical formulations in an accessible manner.'
+
+  data-preparation:
+    - 'Select two key papers on the Free Energy Principle that provide comprehensive overviews or significant contributions.'
+    - 'Extract the core mathematical formulations and theoretical frameworks from these papers.'
+    - 'Identify the main applications of FEP discussed in the selected papers.'
+    - 'Note any critiques or limitations of FEP mentioned in the literature.'
+
+  running-experiments:
+    - 'Analyze the theoretical foundations of the Free Energy Principle presented in the selected papers.'
+    - 'Compare how different authors formulate and interpret the Free Energy Principle.'
+    - 'Synthesize the core mathematical expressions that define FEP.'
+    - 'Evaluate the strengths and limitations of FEP as a unifying theory for brain function.'
+    - 'Identify potential applications of FEP in artificial intelligence, computational psychiatry, or other fields.'
+
+  results-interpretation:
+    - 'Interpret the mathematical and theoretical implications of the Free Energy Principle.'
+    - 'Synthesize the key insights from the reviewed papers.'
+    - 'Evaluate the empirical evidence supporting the Free Energy Principle.'
+    - 'Assess the explanatory power of FEP for understanding cognition and behavior.'
+    - 'Identify open questions and future research directions related to FEP.'
+
+  report-writing:
+    - 'Write a concise, well-formatted review paper (approximately 3,000-5,000 words, no code).'
+    - 'Include clear explanations of the mathematical foundations of the Free Energy Principle.'
+    - 'Provide accessible descriptions of key concepts like variational free energy, active inference, and predictive coding.'
+    - 'Present balanced perspectives on the strengths and limitations of FEP.'
+    - 'Include appropriate citations and a comprehensive bibliography.'
+    - 'Use clear structure with informative headings and subheadings.'
+    - 'Add illustrative diagrams if helpful for explaining complex concepts.'
+    - 'Ensure the paper is accessible to readers with basic knowledge of computational neuroscience.' 

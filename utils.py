@@ -130,6 +130,11 @@ def compile_latex(latex_code, output_path, compile=True, timeout=30):
         "\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n\\usepackage{array}\n\\usepackage{algorithm}\n\\usepackage{algorithmicx}\n\\usepackage{algpseudocode}\n\\usepackage{booktabs}\n\\usepackage{colortbl}\n\\usepackage{color}\n\\usepackage{enumitem}\n\\usepackage{fontawesome5}\n\\usepackage{float}\n\\usepackage{graphicx}\n\\usepackage{hyperref}\n\\usepackage{listings}\n\\usepackage{makecell}\n\\usepackage{multicol}\n\\usepackage{multirow}\n\\usepackage{pgffor}\n\\usepackage{pifont}\n\\usepackage{soul}\n\\usepackage{sidecap}\n\\usepackage{subcaption}\n\\usepackage{titletoc}\n\\usepackage[symbol]{footmisc}\n\\usepackage{url}\n\\usepackage{wrapfig}\n\\usepackage{xcolor}\n\\usepackage{xspace}")
     #print(latex_code)
     dir_path = f"{output_path}/tex"
+    
+    # Create tex directory if it doesn't exist
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path, exist_ok=True)
+        
     tex_file_path = os.path.join(dir_path, "temp.tex")
     # Write the LaTeX code to the .tex file in the specified directory
     with open(tex_file_path, "w") as f:
