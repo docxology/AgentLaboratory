@@ -1,0 +1,95 @@
+# If you want to have user input or be a human-in-the-loop
+copilot_mode: False
+
+# Here is the research prompt. If num-papers-to-write > 1, you can treat this as a "research direction" otherwise it can be *very* specific and can be treated as a full research idea
+research-topic: "Your goal is to develop a comprehensive literature review and analytical synthesis on multiagent Active Inference as a theoretical framework for understanding ant colony behaviors. The review should explore how nestmate ants could be conceptualized as active inference agents with their own generative models, perception-action cycles, and how collective behaviors might emerge from local interactions. The analysis should cover theoretical formulations of how Variational Free Energy (for perception) and Expected Free Energy (for action selection) could explain foraging, nest-building, and defense behaviors in ant colonies. The work should be mathematically rigorous with detailed theoretical formulations and demonstrate how collective intelligence could emerge from individual active inference processes. Do not write code, just long research review and math"
+
+# Here you can put your OpenAI API key--if you don't have one or OpenAI doesn't work for you, you can also instead use `deepseek-api-key`
+api-key: "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"
+# or deepseek-api-key: "DEEPSEEK-API-KEY-HERE"
+# Agent Laboratory backend
+llm-backend: "gpt-4o-mini"
+# Literature review backend
+lit-review-backend: "gpt-4o-mini"
+
+# Base language
+language: "English"
+
+# Number of arxiv papers to lit review
+num-papers-lit-review: 10
+# Number of agentRxiv papers to lit review
+agentrxiv-papers: 1
+# Total number of papers to write in sequence
+num-papers-to-write: 1
+# Do you want to run multiple agent labs in parallel?
+parallel-labs: False
+
+# Total mle-solver steps per lab
+mlesolver-max-steps: 2
+# Total paper-solver steps per lab
+papersolver-max-steps: 2
+# The lab index for this lab (used for parallel runs)
+lab-index: 4
+# If you want to load an existing save
+load-existing: False
+# If fail, run exception?
+except-if-fail: False
+# Compile latex into PDFs during paper-solver
+compile-latex: True
+
+# Task notes
+task-notes:
+  plan-formulation:
+    - 'Develop a comprehensive plan for a dissertation-length literature review and analytical synthesis on multiagent Active Inference for ant colony behavior.'
+    - 'Include theoretical formulations (mathematical derivations) focusing on how Active Inference could explain ant behaviors.'
+    - 'Define the perception-action loop for individual ants, including sensory inputs (pheromones, food detection, threats) and possible actions from a theoretical perspective.'
+    - 'Clearly outline how Variational Free Energy could be used for perception and Expected Free Energy for action selection in each ant agent.'
+    - 'Analyze theories of emergent collective behaviors like trail formation, food transport, and defensive behaviors.'
+    - 'Consider multiple theoretical frameworks for understanding colony behaviors through Active Inference.'
+    - 'Identify metrics from the literature that evaluate both individual agent performance and colony-level emergent behaviors.'
+    - 'Plan the structure of a dissertation-length document with appropriate chapters and sections.'
+
+  data-preparation:
+    - 'Review literature on environment dynamics in ant colonies, including food sources, obstacles, predators, and pheromone diffusion.'
+    - 'Analyze existing research on how ants perceive their local environment (pheromones, food, nest, other ants).'
+    - 'Synthesize literature on prior beliefs and preferences that would lead to foraging, nest-building, and defense behaviors.'
+    - 'Incorporate biologically plausible constraints based on entomological research on ant behaviors.'
+    - 'Review research on environmental factors like day/night cycles, weather conditions, or resource scarcity affecting ant behavior.'
+    - 'Analyze methodological approaches for studying ant colony behavior in the literature.'
+    - 'Review existing theoretical models of spatial representation in ant navigation and colony behavior.'
+
+  running-experiments:
+    - 'Conduct a comprehensive literature review on multiagent Active Inference and ant colony behavior using academic databases.'
+    - 'Analyze theoretical approaches to modeling ant behaviors in the literature.'
+    - 'Compare different theoretical formulations of active inference as applied to social insects.'
+    - 'Critically evaluate existing theoretical models of ant colony behavior.'
+    - 'Analyze how researchers have approached the precision of beliefs, learning rates, and action selection in social insects.'
+    - 'Synthesize research on ant colony adaptations to various environmental conditions (resource scarcity, predator threats, obstacles).'
+    - 'Evaluate theoretical frameworks explaining the emergence of collective intelligence from individual processes.'
+    - 'Compare different theoretical implementations of active inference for social insects (exact vs. approximate inference).'
+    - 'Analyze metrics used in the literature for measuring foraging efficiency, adaptation to changes, and colony survival.'
+    - 'Synthesize visual representations of ant decision-making and colony-level patterns from existing research.'
+
+  results-interpretation:
+    - 'Analyze how well the active inference framework could theoretically reproduce known ant colony behaviors.'
+    - 'Evaluate the theoretical scalability of active inference models with increasing numbers of agents.'
+    - 'Assess the theoretical applications and limitations of active inference for understanding ant colonies.'
+    - 'Interpret theories of how individual belief updating could lead to emergent colony-level behaviors.'
+    - 'Analyze how Expected Free Energy could theoretically guide different ant roles and task allocation.'
+    - 'Compare active inference approaches to traditional multiagent systems or swarm intelligence theoretical frameworks.'
+    - 'Synthesize research on environmental conditions leading to optimal colony performance.'
+    - 'Explore theoretical predictions of emergent behaviors that could arise from active inference processes.'
+
+  report-writing:
+    - 'Produce a dissertation-length document (approximately 40,000-80,000 words) with appropriate chapters and sections.'
+    - 'Clearly present the mathematical formulation of multiagent Active Inference in the context of ant colony behavior theory.'
+    - 'Include detailed derivations of the Variational Free Energy and Expected Free Energy calculations for individual ants.'
+    - 'Explain theoretical models of how local interactions between agents could lead to global emergent behaviors.'
+    - 'Present a comprehensive literature review with critical analysis of existing research.'
+    - 'Discuss the implications of active inference theory for understanding collective intelligence in social insects.'
+    - 'Compare theoretical active inference approaches with traditional swarm intelligence models and agent-based conceptual frameworks.'
+    - 'Connect theoretical computational frameworks to biological research on ant colonies.'
+    - 'Analyze visual representations of ant behavior from the literature.'
+    - 'Explore potential theoretical applications in distributed AI systems, swarm robotics, or multi-agent coordination.'
+    - 'Suggest future research directions and theoretical extensions.'
+    - 'Include comprehensive bibliography and appendices with mathematical derivations and supplementary analyses.' 

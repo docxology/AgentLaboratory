@@ -5,12 +5,12 @@ copilot_mode: True
 research-topic: "Your goal is to design reasoning and prompt engineering techniques to maximize accuracy on the entire 500 test questions of MATH500 benchmark. Your idea should be very novel."
 
 # Here you can put your OpenAI API key--if you don't have one or OpenAI doesn't work for you, you can also instead use `deepseek-api-key`
-api-key: "OPENAI-API-KEY-HERE"
+api-key: "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"
 # or deepseek-api-key: "DEEPSEEK-API-KEY-HERE"
 # Agent Laboratory backend
-llm-backend: "o3-mini"
+llm-backend: "o1-mini"
 # Literature review backend
-lit-review-backend: "o3-mini"
+lit-review-backend: "o1-mini"
 
 # Base language
 language: "English"

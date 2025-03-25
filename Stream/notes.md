@@ -1,0 +1,5 @@
+PyPDF2
+flask
+flask_sqlalchemy
+sentence-transformers
+tf-keras
