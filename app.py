@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import torch
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -58,8 +59,14 @@ def update_papers_from_uploads():
     return
     #raise Exception("FAILED TO UPDATE")
 
-# Load a pre-trained sentence transformer model
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# Try getting device, fall back to CPU if GPU is unavailable
+try:
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+except:
+    device = torch.device("cpu")
+    print("CUDA error detected. Falling back to CPU.")
+
+model = SentenceTransformer('all-MiniLM-L6-v2', device=device)
 
 @app.route('/update', methods=['GET'])
 def update_on_demand():
