@@ -190,17 +190,33 @@ class LaboratoryWorkflow:
             logger.error(f"Error generating discourse summary: {e}")
             logger.exception(e)
         
-        # Compile the LaTeX report into PDF if enabled
+        # Compile all LaTeX files to PDF if enabled
         if self.config.get("compile_latex", False):
             try:
-                latex_file = os.path.join(self.output_dir, f"experiment_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.tex")
-                if os.path.exists(latex_file):
-                    pdf_path = compile_latex_file(latex_file)
-                    logger.info(f"Compiled LaTeX report to PDF: {pdf_path}")
+                # Import here to avoid circular imports
+                from agent_lab.visualization.pdf_generator import compile_latex_file
+                
+                # Find all LaTeX files in the output directory
+                latex_files = [f for f in os.listdir(self.output_dir) if f.endswith('.tex')]
+                compiled_files = []
+                
+                for latex_file in latex_files:
+                    try:
+                        latex_path = os.path.join(self.output_dir, latex_file)
+                        pdf_path = compile_latex_file(latex_path)
+                        
+                        if pdf_path and os.path.exists(pdf_path):
+                            compiled_files.append(pdf_path)
+                            logger.info(f"Compiled LaTeX file to PDF: {pdf_path}")
+                    except Exception as e:
+                        logger.error(f"Error compiling {latex_file} to PDF: {e}")
+                
+                if not compiled_files:
+                    logger.warning("No LaTeX files were successfully compiled to PDF")
                 else:
-                    logger.warning(f"LaTeX file not found at {latex_file}, cannot compile to PDF")
+                    logger.info(f"Successfully compiled {len(compiled_files)} LaTeX files to PDF")
             except Exception as e:
-                logger.error(f"Error compiling LaTeX report to PDF: {e}")
+                logger.error(f"Error compiling LaTeX files to PDF: {e}")
                 logger.exception(e)
         
         logger.info("Workflow completed successfully")
@@ -528,8 +544,27 @@ plt.show = save_and_show
                 # Compile the LaTeX report to PDF if enabled
                 if self.config.get("compile_latex", False):
                     try:
-                        pdf_path = compile_latex_file(latex_file)
-                        logger.info(f"Compiled LaTeX report to PDF: {pdf_path}")
+                        # Use the improved generate_report_pdf function from visualization.pdf_generator
+                        from agent_lab.visualization.pdf_generator import generate_report_pdf
+                        
+                        # Get the output file path without extension
+                        output_file = os.path.splitext(latex_file)[0]
+                        
+                        # Generate PDF from the experiment data and agent dialogs
+                        pdf_path = generate_report_pdf(
+                            experiment_data,
+                            agent_dialogs,
+                            output_file,
+                            self.artifacts_dir
+                        )
+                        
+                        if pdf_path and os.path.exists(pdf_path):
+                            logger.info(f"Generated PDF report: {pdf_path}")
+                        else:
+                            # Fall back to direct compilation if PDF generation fails
+                            from agent_lab.visualization.pdf_generator import compile_latex_file
+                            pdf_path = compile_latex_file(latex_file)
+                            logger.info(f"Compiled LaTeX report to PDF using fallback method: {pdf_path}")
                     except Exception as e:
                         logger.error(f"Error compiling LaTeX report to PDF: {e}")
                         logger.exception(e)

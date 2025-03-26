@@ -26,26 +26,58 @@ def generate_report_pdf(
         output_file: Path to output file (without extension)
         artifacts_dir: Directory containing artifacts
     """
+    # Validate input parameters
+    if not isinstance(experiment_data, dict):
+        logger.warning("experiment_data should be a dictionary, using empty dict")
+        experiment_data = {}
+    
+    if not isinstance(agent_dialogs, list):
+        logger.warning("agent_dialogs should be a list, using empty list")
+        agent_dialogs = []
+        
+    # Extract artifact data if artifacts_dir is provided
+    artifact_data = None
+    if artifacts_dir and os.path.isdir(artifacts_dir):
+        artifact_data = {
+            "figures": [], 
+            "code_files": []
+        }
+        # Add code to extract figures and code files if needed
+    
+    # Get the research topic
+    research_topic = experiment_data.get("research_topic", "Research Project")
+    
     # Generate LaTeX document
     latex_content = generate_latex_document(
-        research_topic=experiment_data.get("research_topic", ""),
-        agent_dialogs=agent_dialogs,
-        artifacts_dir=artifacts_dir
+        research_topic=research_topic,
+        discourse_data=agent_dialogs,
+        artifact_data=artifact_data
     )
     
     # Write LaTeX to file
     latex_file = f"{output_file}.tex"
+    os.makedirs(os.path.dirname(os.path.abspath(latex_file)), exist_ok=True)
     with open(latex_file, "w") as f:
         f.write(latex_content)
     
     # Compile the LaTeX document to PDF
     try:
-        pdf_path = compile_latex(latex_content, output_file)
+        # Try using compile_latex_file which runs directly on the file
+        logger.info(f"Compiling LaTeX file: {latex_file}")
+        pdf_path = compile_latex_file(latex_file)
         logger.info(f"Generated PDF report: {pdf_path}")
         return pdf_path
     except Exception as e:
-        logger.error(f"Error compiling LaTeX: {e}")
-        return None
+        logger.error(f"Error compiling LaTeX file: {e}")
+        # Fall back to compile_latex if file compilation fails
+        try:
+            logger.info("Attempting to compile with fallback method")
+            pdf_path = compile_latex(latex_content, output_file)
+            logger.info(f"Generated PDF report using fallback method: {pdf_path}")
+            return pdf_path
+        except Exception as e:
+            logger.error(f"Error compiling LaTeX with fallback method: {e}")
+            return None
 
 def compile_latex(content: str, output_file: str) -> str:
     """Compile LaTeX content to PDF.
@@ -64,17 +96,37 @@ def compile_latex(content: str, output_file: str) -> str:
         with open(temp_file, "w") as f:
             f.write(content)
         
-        # Compile the document using pdflatex
-        process = subprocess.run(
-            ["pdflatex", "-interaction=nonstopmode", temp_file],
-            cwd=temp_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        
-        if process.returncode != 0:
-            logger.error(f"Error compiling LaTeX: {process.stderr.decode()}")
-            raise Exception("Error compiling LaTeX")
+        # Run pdflatex twice for proper cross-references and TOC
+        for i in range(2):
+            process = subprocess.run(
+                ["pdflatex", "-interaction=nonstopmode", temp_file],
+                cwd=temp_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            
+            # Check for common LaTeX errors
+            if process.returncode != 0:
+                output = process.stdout.decode()
+                error_msg = "Error compiling LaTeX"
+                
+                # Try to extract specific error messages
+                if "Emergency stop" in output:
+                    error_line = next((line for line in output.split('\n') if "Emergency stop" in line), "")
+                    error_context = output.split(error_line)[0].split('\n')[-5:]
+                    error_msg = f"LaTeX emergency stop: {' '.join(error_context)}"
+                elif "Fatal error" in output:
+                    error_line = next((line for line in output.split('\n') if "Fatal error" in line), "")
+                    error_msg = f"LaTeX fatal error: {error_line}"
+                
+                logger.error(f"{error_msg}: {process.stderr.decode()}")
+                # Write the LaTeX error log to a file for debugging
+                with open(f"{output_file}.log", "w") as f:
+                    f.write(output)
+                
+                # Only raise exception on the second pass
+                if i == 1:
+                    raise Exception(error_msg)
         
         # Copy the compiled PDF to the output file
         pdf_path = f"{output_file}.pdf"
@@ -143,6 +195,10 @@ def generate_latex_document(
     Returns:
         str: LaTeX document content
     """
+    # Ensure discourse_data is a list
+    if discourse_data is None:
+        discourse_data = []
+        
     # Escape the research topic for LaTeX
     safe_research_topic = escape_latex(research_topic)
     
@@ -218,7 +274,7 @@ def generate_latex_document(
 \lstset{style=mystyle}
 
 % Title
-\title{\textbf{\Large{Research Report:} \\ \huge{\textsf{""" + safe_research_topic + r"""}}}}}
+\title{\textbf{\Large{Research Report:}} \\ \huge{\textsf{""" + safe_research_topic + r"""}}}
 \author{Agent Laboratory Team}
 \date{\today}
 
@@ -261,6 +317,14 @@ The research followed these key phases:
                 }
                 
                 latex_content += escape_latex(phase_descriptions.get(phase_name, "Conducted research tasks"))
+    else:
+        # Add default phases when no discourse data is available
+        latex_content += """
+\item \\textbf{Literature Review} - Review of existing research and methodologies
+\item \\textbf{Implementation} - Development and implementation of algorithms and models
+\item \\textbf{Evaluation} - Testing and evaluating the implemented solution
+\item \\textbf{Analysis} - Analysis of results and drawing conclusions
+"""
     
     latex_content += """
 \end{itemize}
@@ -504,12 +568,12 @@ This phase involved contributions from:
 This report has documented the comprehensive research process for %s. Through systematic collaboration between expert agents, including professors, engineers, and critics, the research progressed through multiple phases from initial planning to final implementation and analysis.
 
 The key contributions include:
-\begin{itemize}
+\\begin{itemize}
     \item A systematic methodology for approaching %s
     \item Technical implementation demonstrating the principles in action
     \item Critical analysis of results and implications
     \item Insights for future research directions
-\end{itemize}
+\\end{itemize}
 
 The Agent Laboratory framework has facilitated this multi-agent, multi-phase research process, enabling structured collaboration and comprehensive documentation throughout.
 
@@ -530,6 +594,9 @@ def escape_latex(text):
     Returns:
         str: Escaped string
     """
+    if text is None:
+        return ""
+        
     # Define LaTeX special characters and their escaped versions
     latex_special_chars = {
         '&': r'\&',
@@ -546,9 +613,41 @@ def escape_latex(text):
         '>': r'\textgreater{}'
     }
     
-    # Escape each special character
+    # Convert to string if necessary
+    if not isinstance(text, str):
+        text = str(text)
+    
+    # Handle empty string
+    if not text:
+        return ""
+    
+    # Handle markdown headers properly by converting them to LaTeX sections BEFORE escaping
+    # Convert markdown headers to LaTeX sections (important to do this before escaping other characters)
+    lines = text.split('\n')
+    for i, line in enumerate(lines):
+        # Handle markdown headers (###, ##, #)
+        if line.startswith('### '):
+            lines[i] = '\\subsubsection{' + line[4:] + '}'
+        elif line.startswith('## '):
+            lines[i] = '\\subsection{' + line[3:] + '}'
+        elif line.startswith('# '):
+            lines[i] = '\\section{' + line[2:] + '}'
+        # Handle other variations of markdown headers
+        elif line.startswith('####'):
+            lines[i] = '\\paragraph{' + line.lstrip('#').lstrip() + '}'
+    
+    # Rejoin text
+    text = '\n'.join(lines)
+    
+    # Now escape special characters in the remaining text
     for char, escaped in latex_special_chars.items():
         text = text.replace(char, escaped)
+    
+    # Convert escaped markdown-style headers that might remain
+    text = re.sub(r'\\#\\#\\#\\#\\s+(.+)', r'\\paragraph{\1}', text)
+    text = re.sub(r'\\#\\#\\#\\s+(.+)', r'\\subsubsection{\1}', text)
+    text = re.sub(r'\\#\\#\\s+(.+)', r'\\subsection{\1}', text)
+    text = re.sub(r'\\#\\s+(.+)', r'\\section{\1}', text)
     
     return text
 
