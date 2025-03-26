@@ -1,0 +1,425 @@
+2025-03-26 13:16:10,942 - root - INFO - Logging to outputs/20250326_131610_POMDP_ActiveInference/workflow_20250326_131610.log
+2025-03-26 13:16:10,942 - agent_lab.core.llm_interface - INFO - LLM interface initialized with OpenAI API key (length: 164)
+2025-03-26 13:16:10,943 - agent_lab.core.llm_interface - INFO - LLM interface initialized with OpenAI API key (length: 164)
+2025-03-26 13:16:10,943 - agent_lab.agents.professor_agent - INFO - Initialized professor agent: artificial intelligence
+2025-03-26 13:16:10,943 - agent_lab.core.llm_interface - INFO - LLM interface initialized with OpenAI API key (length: 164)
+2025-03-26 13:16:10,943 - agent_lab.agents.professor_agent - INFO - Initialized professor agent: artificial intelligence
+2025-03-26 13:16:10,943 - agent_lab.core.llm_interface - INFO - LLM interface initialized with OpenAI API key (length: 164)
+2025-03-26 13:16:10,943 - agent_lab.agents.engineer_agent - INFO - Initialized Engineer Agent
+2025-03-26 13:16:10,943 - agent_lab.core.llm_interface - INFO - LLM interface initialized with OpenAI API key (length: 164)
+2025-03-26 13:16:10,943 - agent_lab.agents.critic_agent - INFO - Initialized Critic Agent
+2025-03-26 13:16:10,943 - agent_lab.agents.multi_agent - INFO - Initialized multi-agent team with 3 agents
+2025-03-26 13:16:10,943 - agent_lab.core.workflow - WARNING - No state file found at outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json, starting from scratch
+2025-03-26 13:16:10,943 - agent_lab.core.workflow - INFO - Running phase: literature-review
+2025-03-26 13:16:10,944 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: literature-review
+2025-03-26 13:16:10,944 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on literature-review
+2025-03-26 13:16:10,944 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: literature-review
+2025-03-26 13:16:10,944 - agent_lab.core.base_agent - INFO - Completing phase: literature-review
+2025-03-26 13:16:11,139 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 161, Total: 167
+2025-03-26 13:16:11,139 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:16:11,140 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:16:26,370 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 177, Completion: 1121, Total: 1298
+2025-03-26 13:16:26,371 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 15.23s, response size: 5132 characters
+2025-03-26 13:16:26,371 - agent_lab.agents.professor_agent - INFO - Saved literature-review output to outputs/professor_outputs/literature-review_20250326_131626.md [5132 chars, 739 words]
+2025-03-26 13:16:26,371 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/literature-review_20250326_131626.md
+2025-03-26 13:16:26,371 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to literature-review
+2025-03-26 13:16:26,371 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: literature-review
+2025-03-26 13:16:26,412 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 669, Total: 832
+2025-03-26 13:16:26,412 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:16:26,412 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:16:38,884 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 848, Completion: 1049, Total: 1897
+2025-03-26 13:16:38,884 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 12.47s, response size: 5528 characters
+2025-03-26 13:16:38,885 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: literature-review
+2025-03-26 13:16:38,885 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing literature-review outputs
+2025-03-26 13:16:38,885 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: literature-review
+2025-03-26 13:16:38,943 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 910, Total: 1108
+2025-03-26 13:16:38,943 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:16:38,943 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:16:49,853 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1115, Completion: 770, Total: 1885
+2025-03-26 13:16:49,854 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 10.91s, response size: 4088 characters
+2025-03-26 13:16:49,854 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: literature-review
+2025-03-26 13:16:49,854 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for literature-review
+2025-03-26 13:16:49,854 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: literature-review-integration
+2025-03-26 13:16:49,854 - agent_lab.core.base_agent - INFO - Completing phase: literature-review-integration
+2025-03-26 13:16:49,898 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 1944, Total: 1950
+2025-03-26 13:16:49,898 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:16:49,898 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:17:07,964 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1981, Completion: 1259, Total: 3240
+2025-03-26 13:17:07,964 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 18.07s, response size: 5926 characters
+2025-03-26 13:17:07,965 - agent_lab.agents.professor_agent - INFO - Saved literature-review-integration output to outputs/professor_outputs/literature-review-integration_20250326_131707.md [5926 chars, 842 words]
+2025-03-26 13:17:07,965 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/literature-review-integration_20250326_131626.md
+2025-03-26 13:17:07,966 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from literature-review phase
+2025-03-26 13:17:07,966 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:17:07,966 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,966 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:17:07,966 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,966 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:17:07,966 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,973 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: literature-review
+2025-03-26 13:17:07,974 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:17:07,974 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,974 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,974 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:17:07,974 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:17:07,975 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:17:07,975 - agent_lab.core.workflow - INFO - Completed phase: literature-review
+2025-03-26 13:17:07,975 - agent_lab.core.workflow - INFO - Running phase: plan-formulation
+2025-03-26 13:17:07,975 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: plan-formulation
+2025-03-26 13:17:07,975 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on plan-formulation
+2025-03-26 13:17:07,975 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: plan-formulation
+2025-03-26 13:17:07,975 - agent_lab.core.base_agent - INFO - Completing phase: plan-formulation
+2025-03-26 13:17:08,025 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 3109, Total: 3115
+2025-03-26 13:17:08,025 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:17:08,025 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:17:29,368 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 3155, Completion: 1183, Total: 4338
+2025-03-26 13:17:29,368 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 21.34s, response size: 5631 characters
+2025-03-26 13:17:29,369 - agent_lab.agents.professor_agent - INFO - Saved plan-formulation output to outputs/professor_outputs/plan-formulation_20250326_131729.md [5631 chars, 756 words]
+2025-03-26 13:17:29,369 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/plan-formulation_20250326_131729.md
+2025-03-26 13:17:29,370 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to plan-formulation
+2025-03-26 13:17:29,370 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: plan-formulation
+2025-03-26 13:17:29,407 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1349, Total: 1512
+2025-03-26 13:17:29,407 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:17:29,407 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:17:42,317 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1518, Completion: 1132, Total: 2650
+2025-03-26 13:17:42,317 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 12.91s, response size: 5504 characters
+2025-03-26 13:17:42,318 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: plan-formulation
+2025-03-26 13:17:42,319 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing plan-formulation outputs
+2025-03-26 13:17:42,319 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: plan-formulation
+2025-03-26 13:17:42,358 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 1686, Total: 1884
+2025-03-26 13:17:42,358 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:17:42,358 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:17:57,942 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1887, Completion: 789, Total: 2676
+2025-03-26 13:17:57,943 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 15.58s, response size: 4187 characters
+2025-03-26 13:17:57,943 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: plan-formulation
+2025-03-26 13:17:57,945 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for plan-formulation
+2025-03-26 13:17:57,946 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: plan-formulation-integration
+2025-03-26 13:17:57,946 - agent_lab.core.base_agent - INFO - Completing phase: plan-formulation-integration
+2025-03-26 13:17:58,024 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 5012, Total: 5018
+2025-03-26 13:17:58,024 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:17:58,024 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:18:31,377 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 5071, Completion: 1468, Total: 6539
+2025-03-26 13:18:31,377 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 33.35s, response size: 6631 characters
+2025-03-26 13:18:31,378 - agent_lab.agents.professor_agent - INFO - Saved plan-formulation-integration output to outputs/professor_outputs/plan-formulation-integration_20250326_131831.md [6631 chars, 921 words]
+2025-03-26 13:18:31,378 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/plan-formulation-integration_20250326_131729.md
+2025-03-26 13:18:31,379 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from plan-formulation phase
+2025-03-26 13:18:31,379 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:18:31,379 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,380 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:18:31,380 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,380 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:18:31,380 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,380 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:18:31,381 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:18:31,381 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: plan-formulation
+2025-03-26 13:18:31,381 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:18:31,381 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:18:31,381 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,381 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:18:31,382 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,382 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:18:31,382 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:18:31,382 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:18:31,382 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:18:31,383 - agent_lab.core.workflow - INFO - Completed phase: plan-formulation
+2025-03-26 13:18:31,383 - agent_lab.core.workflow - INFO - Running phase: data-preparation
+2025-03-26 13:18:31,383 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: data-preparation
+2025-03-26 13:18:31,384 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on data-preparation
+2025-03-26 13:18:31,384 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: data-preparation
+2025-03-26 13:18:31,384 - agent_lab.core.base_agent - INFO - Completing phase: data-preparation
+2025-03-26 13:18:31,435 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 6499, Total: 6505
+2025-03-26 13:18:31,435 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:18:31,435 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:18:55,999 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 6561, Completion: 1649, Total: 8210
+2025-03-26 13:18:56,000 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 24.56s, response size: 7456 characters
+2025-03-26 13:18:56,001 - agent_lab.agents.professor_agent - INFO - Saved data-preparation output to outputs/professor_outputs/data-preparation_20250326_131855.md [7456 chars, 1059 words]
+2025-03-26 13:18:56,001 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/data-preparation_20250326_131856.md
+2025-03-26 13:18:56,003 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to data-preparation
+2025-03-26 13:18:56,004 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: data-preparation
+2025-03-26 13:18:56,075 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1787, Total: 1950
+2025-03-26 13:18:56,075 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:18:56,075 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:19:08,697 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1961, Completion: 1019, Total: 2980
+2025-03-26 13:19:08,697 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 12.62s, response size: 5022 characters
+2025-03-26 13:19:08,697 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: data-preparation
+2025-03-26 13:19:08,698 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing data-preparation outputs
+2025-03-26 13:19:08,698 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: data-preparation
+2025-03-26 13:19:08,736 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 2126, Total: 2324
+2025-03-26 13:19:08,736 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:19:08,736 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:19:23,238 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2336, Completion: 838, Total: 3174
+2025-03-26 13:19:23,238 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 14.50s, response size: 4469 characters
+2025-03-26 13:19:23,238 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: data-preparation
+2025-03-26 13:19:23,239 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for data-preparation
+2025-03-26 13:19:23,239 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: data-preparation-integration
+2025-03-26 13:19:23,239 - agent_lab.core.base_agent - INFO - Completing phase: data-preparation-integration
+2025-03-26 13:19:23,279 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 8523, Total: 8529
+2025-03-26 13:19:23,279 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:19:23,280 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:19:49,652 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 8609, Completion: 1692, Total: 10301
+2025-03-26 13:19:49,652 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 26.37s, response size: 7889 characters
+2025-03-26 13:19:49,653 - agent_lab.agents.professor_agent - INFO - Saved data-preparation-integration output to outputs/professor_outputs/data-preparation-integration_20250326_131949.md [7889 chars, 1116 words]
+2025-03-26 13:19:49,653 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/data-preparation-integration_20250326_131856.md
+2025-03-26 13:19:49,653 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from data-preparation phase
+2025-03-26 13:19:49,654 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:19:49,654 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,654 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:19:49,654 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,654 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:19:49,654 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,661 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:19:49,662 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:19:49,662 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: data-preparation
+2025-03-26 13:19:49,662 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:19:49,662 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:19:49,662 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,662 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:19:49,662 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,663 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:19:49,663 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:19:49,663 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:19:49,663 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:19:49,663 - agent_lab.core.workflow - INFO - Completed phase: data-preparation
+2025-03-26 13:19:49,663 - agent_lab.core.workflow - INFO - Running phase: code-implementation
+2025-03-26 13:19:49,663 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: code-implementation
+2025-03-26 13:19:49,664 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on code-implementation
+2025-03-26 13:19:49,664 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: code-implementation
+2025-03-26 13:19:49,664 - agent_lab.core.base_agent - INFO - Completing phase: code-implementation
+2025-03-26 13:19:49,709 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 10207, Total: 10213
+2025-03-26 13:19:49,709 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:19:49,709 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:20:08,089 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 10312, Completion: 1398, Total: 11710
+2025-03-26 13:20:08,089 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 18.38s, response size: 6158 characters
+2025-03-26 13:20:08,089 - agent_lab.agents.professor_agent - INFO - Saved code-implementation output to outputs/professor_outputs/code-implementation_20250326_132008.md [6158 chars, 795 words]
+2025-03-26 13:20:08,089 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/code-implementation_20250326_132008.md
+2025-03-26 13:20:08,090 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to code-implementation
+2025-03-26 13:20:08,090 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: code-implementation
+2025-03-26 13:20:08,131 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1822, Total: 1985
+2025-03-26 13:20:08,131 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:20:08,132 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:20:17,204 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1994, Completion: 999, Total: 2993
+2025-03-26 13:20:17,204 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 9.07s, response size: 4642 characters
+2025-03-26 13:20:17,204 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: code-implementation
+2025-03-26 13:20:17,205 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing code-implementation outputs
+2025-03-26 13:20:17,205 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: code-implementation
+2025-03-26 13:20:17,254 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 2129, Total: 2327
+2025-03-26 13:20:17,254 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:20:17,255 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:20:30,919 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2335, Completion: 816, Total: 3151
+2025-03-26 13:20:30,919 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 13.66s, response size: 4274 characters
+2025-03-26 13:20:30,919 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: code-implementation
+2025-03-26 13:20:30,920 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for code-implementation
+2025-03-26 13:20:30,920 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: code-implementation-integration
+2025-03-26 13:20:30,920 - agent_lab.core.base_agent - INFO - Completing phase: code-implementation-integration
+2025-03-26 13:20:30,963 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 11672, Total: 11678
+2025-03-26 13:20:30,963 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:20:30,963 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:20:49,967 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 11778, Completion: 1631, Total: 13409
+2025-03-26 13:20:49,967 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 19.00s, response size: 6890 characters
+2025-03-26 13:20:49,967 - agent_lab.agents.professor_agent - INFO - Saved code-implementation-integration output to outputs/professor_outputs/code-implementation-integration_20250326_132049.md [6890 chars, 891 words]
+2025-03-26 13:20:49,967 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/code-implementation-integration_20250326_132008.md
+2025-03-26 13:20:49,968 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from code-implementation phase
+2025-03-26 13:20:49,969 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:20:49,969 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,969 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:20:49,969 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,969 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:20:49,969 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,976 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:20:49,976 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:20:49,976 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: code-implementation
+2025-03-26 13:20:49,976 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:20:49,977 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:20:49,977 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,977 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:20:49,977 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,977 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:20:49,977 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:20:49,978 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:20:49,978 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:20:49,978 - agent_lab.core.workflow - INFO - Completed phase: code-implementation
+2025-03-26 13:20:49,978 - agent_lab.core.workflow - INFO - Running phase: running-experiments
+2025-03-26 13:20:49,978 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: running-experiments
+2025-03-26 13:20:49,979 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on running-experiments
+2025-03-26 13:20:49,979 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: running-experiments
+2025-03-26 13:20:49,979 - agent_lab.core.base_agent - INFO - Completing phase: running-experiments
+2025-03-26 13:20:50,029 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 12871, Total: 12877
+2025-03-26 13:20:50,029 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:20:50,029 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:21:09,734 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 12981, Completion: 1626, Total: 14607
+2025-03-26 13:21:09,734 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 19.71s, response size: 6867 characters
+2025-03-26 13:21:09,735 - agent_lab.agents.professor_agent - INFO - Saved running-experiments output to outputs/professor_outputs/running-experiments_20250326_132109.md [6867 chars, 886 words]
+2025-03-26 13:21:09,735 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/running-experiments_20250326_132109.md
+2025-03-26 13:21:09,736 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to running-experiments
+2025-03-26 13:21:09,736 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: running-experiments
+2025-03-26 13:21:09,808 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1773, Total: 1936
+2025-03-26 13:21:09,808 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:21:09,809 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:21:22,811 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1943, Completion: 872, Total: 2815
+2025-03-26 13:21:22,811 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 13.00s, response size: 4265 characters
+2025-03-26 13:21:22,811 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: running-experiments
+2025-03-26 13:21:22,812 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing running-experiments outputs
+2025-03-26 13:21:22,812 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: running-experiments
+2025-03-26 13:21:22,853 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 2062, Total: 2260
+2025-03-26 13:21:22,853 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:21:22,854 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:21:34,385 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2275, Completion: 754, Total: 3029
+2025-03-26 13:21:34,385 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 11.53s, response size: 4159 characters
+2025-03-26 13:21:34,385 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: running-experiments
+2025-03-26 13:21:34,387 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for running-experiments
+2025-03-26 13:21:34,387 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: running-experiments-integration
+2025-03-26 13:21:34,387 - agent_lab.core.base_agent - INFO - Completing phase: running-experiments-integration
+2025-03-26 13:21:34,436 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 14780, Total: 14786
+2025-03-26 13:21:34,436 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:21:34,436 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:22:03,588 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 14919, Completion: 1702, Total: 16621
+2025-03-26 13:22:03,589 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 29.15s, response size: 7089 characters
+2025-03-26 13:22:03,590 - agent_lab.agents.professor_agent - INFO - Saved running-experiments-integration output to outputs/professor_outputs/running-experiments-integration_20250326_132203.md [7089 chars, 915 words]
+2025-03-26 13:22:03,590 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/running-experiments-integration_20250326_132109.md
+2025-03-26 13:22:03,591 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from running-experiments phase
+2025-03-26 13:22:03,592 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:22:03,592 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,592 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:22:03,592 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,593 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:22:03,593 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,600 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:22:03,600 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:22:03,600 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: running-experiments
+2025-03-26 13:22:03,600 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:22:03,601 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:22:03,601 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,601 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:22:03,601 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,601 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:22:03,601 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:22:03,601 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:22:03,602 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:22:03,602 - agent_lab.core.workflow - INFO - Completed phase: running-experiments
+2025-03-26 13:22:03,602 - agent_lab.core.workflow - INFO - Running phase: results-interpretation
+2025-03-26 13:22:03,602 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: results-interpretation
+2025-03-26 13:22:03,603 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on results-interpretation
+2025-03-26 13:22:03,603 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: results-interpretation
+2025-03-26 13:22:03,603 - agent_lab.core.base_agent - INFO - Completing phase: results-interpretation
+2025-03-26 13:22:03,648 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 15997, Total: 16003
+2025-03-26 13:22:03,648 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:22:03,648 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:22:27,435 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 16126, Completion: 1701, Total: 17827
+2025-03-26 13:22:27,435 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 23.79s, response size: 7085 characters
+2025-03-26 13:22:27,435 - agent_lab.agents.professor_agent - INFO - Saved results-interpretation output to outputs/professor_outputs/results-interpretation_20250326_132227.md [7085 chars, 914 words]
+2025-03-26 13:22:27,436 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/results-interpretation_20250326_132227.md
+2025-03-26 13:22:27,437 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to results-interpretation
+2025-03-26 13:22:27,437 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: results-interpretation
+2025-03-26 13:22:27,475 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1620, Total: 1783
+2025-03-26 13:22:27,475 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:22:27,475 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:22:41,890 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 1781, Completion: 1126, Total: 2907
+2025-03-26 13:22:41,890 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 14.41s, response size: 5708 characters
+2025-03-26 13:22:41,890 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: results-interpretation
+2025-03-26 13:22:41,891 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing results-interpretation outputs
+2025-03-26 13:22:41,891 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: results-interpretation
+2025-03-26 13:22:41,931 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 1877, Total: 2075
+2025-03-26 13:22:41,931 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:22:41,931 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:22:52,591 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2077, Completion: 799, Total: 2876
+2025-03-26 13:22:52,591 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 10.66s, response size: 4432 characters
+2025-03-26 13:22:52,592 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: results-interpretation
+2025-03-26 13:22:52,592 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for results-interpretation
+2025-03-26 13:22:52,593 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: results-interpretation-integration
+2025-03-26 13:22:52,593 - agent_lab.core.base_agent - INFO - Completing phase: results-interpretation-integration
+2025-03-26 13:22:52,643 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 17990, Total: 17996
+2025-03-26 13:22:52,644 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:22:52,644 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:23:06,043 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 18135, Completion: 946, Total: 19081
+2025-03-26 13:23:06,043 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 13.40s, response size: 5314 characters
+2025-03-26 13:23:06,043 - agent_lab.agents.professor_agent - INFO - Saved results-interpretation-integration output to outputs/professor_outputs/results-interpretation-integration_20250326_132306.md [5314 chars, 685 words]
+2025-03-26 13:23:06,043 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/results-interpretation-integration_20250326_132227.md
+2025-03-26 13:23:06,045 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from results-interpretation phase
+2025-03-26 13:23:06,046 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:23:06,046 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,046 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:23:06,046 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,046 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:23:06,047 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,053 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:23:06,054 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:23:06,054 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: results-interpretation
+2025-03-26 13:23:06,054 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:23:06,055 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:23:06,055 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,055 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:23:06,055 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,055 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:23:06,055 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:23:06,056 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:23:06,057 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:23:06,057 - agent_lab.core.workflow - INFO - Completed phase: results-interpretation
+2025-03-26 13:23:06,057 - agent_lab.core.workflow - INFO - Running phase: report-writing
+2025-03-26 13:23:06,057 - agent_lab.agents.multi_agent - INFO - Starting multi-agent discourse for phase: report-writing
+2025-03-26 13:23:06,058 - agent_lab.agents.multi_agent - INFO - Professor agent starting initial work on report-writing
+2025-03-26 13:23:06,058 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: report-writing
+2025-03-26 13:23:06,058 - agent_lab.core.base_agent - INFO - Completing phase: report-writing
+2025-03-26 13:23:06,106 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 19010, Total: 19016
+2025-03-26 13:23:06,106 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:23:06,106 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:23:20,365 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 19157, Completion: 1076, Total: 20233
+2025-03-26 13:23:20,365 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 14.26s, response size: 6116 characters
+2025-03-26 13:23:20,365 - agent_lab.agents.professor_agent - INFO - Saved report-writing output to outputs/professor_outputs/report-writing_20250326_132320.md [6116 chars, 788 words]
+2025-03-26 13:23:20,365 - agent_lab.agents.multi_agent - INFO - Saved professor's initial output to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/report-writing_20250326_132320.md
+2025-03-26 13:23:20,366 - agent_lab.agents.multi_agent - INFO - Engineer agent contributing to report-writing
+2025-03-26 13:23:20,366 - agent_lab.agents.engineer_agent - INFO - Engineer Agent starting work on phase: report-writing
+2025-03-26 13:23:20,408 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 163, User: 1906, Total: 2069
+2025-03-26 13:23:20,409 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:23:20,409 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:23:32,882 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2068, Completion: 1041, Total: 3109
+2025-03-26 13:23:32,882 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 12.47s, response size: 5330 characters
+2025-03-26 13:23:32,882 - agent_lab.agents.engineer_agent - INFO - Engineer Agent completed phase: report-writing
+2025-03-26 13:23:32,883 - agent_lab.agents.multi_agent - INFO - Critic agent reviewing report-writing outputs
+2025-03-26 13:23:32,883 - agent_lab.agents.critic_agent - INFO - Critic Agent starting work on phase: report-writing
+2025-03-26 13:23:32,926 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 198, User: 2162, Total: 2360
+2025-03-26 13:23:32,926 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:23:32,926 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:23:43,938 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 2359, Completion: 751, Total: 3110
+2025-03-26 13:23:43,938 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 11.01s, response size: 4104 characters
+2025-03-26 13:23:43,938 - agent_lab.agents.critic_agent - INFO - Critic Agent completed phase: report-writing
+2025-03-26 13:23:43,939 - agent_lab.agents.multi_agent - INFO - Professor agent integrating contributions for report-writing
+2025-03-26 13:23:43,939 - agent_lab.agents.professor_agent - INFO - Professor agent completing phase: report-writing-integration
+2025-03-26 13:23:43,939 - agent_lab.core.base_agent - INFO - Completing phase: report-writing-integration
+2025-03-26 13:23:43,988 - agent_lab.core.llm_interface - INFO - Estimated token usage - System: 6, User: 20405, Total: 20411
+2025-03-26 13:23:43,988 - agent_lab.core.llm_interface - INFO - Calling OpenAI API with model=gpt-4o-mini, temp=0.7, max_tokens=2048
+2025-03-26 13:23:43,988 - agent_lab.core.llm_interface - INFO - OpenAI API call initiated from: /home/trim/Documents/GitHub/AgentLaboratory/agent_lab/core/llm_interface.py:67 in generate
+2025-03-26 13:25:37,269 - agent_lab.core.llm_interface - INFO - Token usage - Prompt: 20551, Completion: 2048, Total: 22599
+2025-03-26 13:25:37,269 - agent_lab.core.llm_interface - INFO - OpenAI API call completed in 113.28s, response size: 9340 characters
+2025-03-26 13:25:37,269 - agent_lab.agents.professor_agent - INFO - Saved report-writing-integration output to outputs/professor_outputs/report-writing-integration_20250326_132537.md [9340 chars, 1187 words]
+2025-03-26 13:25:37,270 - agent_lab.agents.multi_agent - INFO - Saved professor's integration to outputs/20250326_131610_POMDP_ActiveInference/professor_outputs/report-writing-integration_20250326_132320.md
+2025-03-26 13:25:37,271 - agent_lab.agents.multi_agent - INFO - Updated research plan with insights from report-writing phase
+2025-03-26 13:25:37,272 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:25:37,272 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,272 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:25:37,272 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,272 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:25:37,272 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,279 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:25:37,280 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:25:37,280 - agent_lab.agents.multi_agent - INFO - Completed multi-agent discourse for phase: report-writing
+2025-03-26 13:25:37,280 - agent_lab.core.workflow - INFO - Saved workflow state to outputs/20250326_131610_POMDP_ActiveInference/workflow_state.json
+2025-03-26 13:25:37,281 - agent_lab.agents.professor_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/ProfessorAgent_state.json
+2025-03-26 13:25:37,281 - agent_lab.agents.multi_agent - INFO - Saved state for professor agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,281 - agent_lab.agents.engineer_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/EngineerAgent_state.json
+2025-03-26 13:25:37,281 - agent_lab.agents.multi_agent - INFO - Saved state for engineer agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,281 - agent_lab.agents.critic_agent - INFO - Agent state saved to outputs/20250326_131610_POMDP_ActiveInference/CriticAgent_state.json
+2025-03-26 13:25:37,281 - agent_lab.agents.multi_agent - INFO - Saved state for critic agent to outputs/20250326_131610_POMDP_ActiveInference
+2025-03-26 13:25:37,282 - agent_lab.agents.multi_agent - INFO - Saved shared knowledge to outputs/20250326_131610_POMDP_ActiveInference/shared_knowledge.json
+2025-03-26 13:25:37,282 - agent_lab.agents.multi_agent - INFO - Saved research plan to outputs/20250326_131610_POMDP_ActiveInference/research_plan.json
+2025-03-26 13:25:37,282 - agent_lab.core.workflow - INFO - Completed phase: report-writing
+2025-03-26 13:25:37,282 - agent_lab.core.workflow - INFO - Generating report
+2025-03-26 13:25:37,283 - agent_lab.core.workflow - INFO - Saved implementation code to outputs/20250326_131610_POMDP_ActiveInference/artifacts/implementation.py
+2025-03-26 13:25:37,284 - agent_lab.core.workflow - INFO - Saved LaTeX report to outputs/20250326_131610_POMDP_ActiveInference/experiment_report_20250326_132537.tex
+2025-03-26 13:25:37,284 - agent_lab.core.workflow - INFO - Copied LaTeX report to outputs/20250326_131610_POMDP_ActiveInference/artifacts.tex
+2025-03-26 13:25:37,285 - agent_lab.core.workflow - INFO - Saved agent discourse summary to outputs/20250326_131610_POMDP_ActiveInference/artifacts/agent_discourse.md
+2025-03-26 13:25:37,285 - agent_lab.core.workflow - INFO - Workflow completed successfully
+2025-03-26 13:25:37,285 - root - INFO - Agent Laboratory workflow completed successfully

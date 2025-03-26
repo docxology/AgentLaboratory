@@ -1,0 +1,125 @@
+# If you want to have user input or be a human-in-the-loop
+copilot_mode: False
+
+# Here is the research prompt. If num-papers-to-write > 1, you can treat this as a "research direction" otherwise it can be *very* specific and can be treated as a full research idea
+research-topic: "Your goal is to develop a Partially Observable Markov Decision Process (POMDP) that implements Active Inference with Variational Free Energy (for sensemaking) and Expected Free Energy (for action selection). The POMDP should model a room's thermal homeostat with 3 control states (cool, nothing, heat), 5 latent states for room temperature, and an observation space with 10 discrete levels (cold to hot). The implementation should be mathematically rigorous and include both theoretical formulations and practical code."
+
+# Here you can put your OpenAI API key--if you don't have one or OpenAI doesn't work for you, you can also instead use `deepseek-api-key`
+api-key: "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"
+# or deepseek-api-key: "DEEPSEEK-API-KEY-HERE"
+# Agent Laboratory backend
+llm-backend: "o3-mini"
+# Literature review backend
+lit-review-backend: "o3-mini"
+
+# Base language
+language: "English"
+
+# Number of arxiv papers to lit review
+num-papers-lit-review: 5
+# Number of agentRxiv papers to lit review
+agentrxiv-papers: 3
+# Total number of papers to write in sequence
+num-papers-to-write: 1
+# Do you want to run multiple agent labs in parallel?
+parallel-labs: False
+
+# Total mle-solver steps per lab
+mlesolver-max-steps: 3
+# Total paper-solver steps per lab
+papersolver-max-steps: 3
+# The lab index for this lab (used for parallel runs)
+lab-index: 1
+# If you want to load an existing save
+load-existing: False
+# If fail, run exception?
+except-if-fail: True
+# Compile latex into PDFs during paper-solver
+compile-latex: True
+# Execute code during running-experiments phase
+execute-code: True
+# Save visualizations and results as artifacts
+save-artifacts: True
+# Enable agent discourse for deep collaboration
+enable-agent-discourse: True
+# Set higher memory limit for agents to retain context
+agent-memory-limit: 15000
+
+# Task notes
+task-notes:
+  plan-formulation:
+    - 'Develop a comprehensive plan for implementing a POMDP model that incorporates Active Inference principles for thermal homeostasis.'
+    - 'Your plan should include both theoretical formulations (mathematical derivations) and implementation details.'
+    - 'The POMDP should have 3 control states (cool, nothing, heat), 5 latent states for room temperature, and an observation space with 10 discrete levels (cold to hot).'
+    - 'Clearly outline how Variational Free Energy will be used for sensemaking and Expected Free Energy for action selection.'
+    - 'Consider both package-based implementations and from-first-principles approaches.'
+    - 'Identify metrics to evaluate the effectiveness of your implementation.'
+    - 'Plan to include visualizations of the belief updates, policy selection, and system behavior over time.'
+    - 'Establish clear mathematical notation and formalism for the POMDP and Active Inference components.'
+    - 'Define a clear workflow for implementation, testing, and evaluation.'
+
+  literature-review:
+    - 'Review key papers on POMDPs, Active Inference, and their applications to control systems.'
+    - 'Identify foundational mathematical frameworks for applying Active Inference to control problems.'
+    - 'Analyze existing implementations of thermal control systems using POMDP or similar approaches.'
+    - 'Synthesize key findings across literature to inform your approach.'
+    - 'Identify gaps in current research that your implementation will address.'
+
+  data-preparation:
+    - 'Define the transition dynamics of the thermal system based on physics principles.'
+    - 'Create observation models that map latent temperature states to observable temperature readings.'
+    - 'Design prior beliefs and preferences that would lead to temperature homeostasis around a target value.'
+    - 'Generate synthetic data for testing and validation if needed.'
+    - 'Consider external factors like ambient temperature that might affect the system.'
+    - 'Create a robust data structure to store and analyze simulation results.'
+    - 'Design experiments with varying initial conditions, target states, and disturbances.'
+
+  code-implementation:
+    - 'Implement the core POMDP model with Active Inference components.'
+    - 'Create modular, well-documented code with clear separation of concerns.'
+    - 'Include proper type hints and error handling.'
+    - 'Implement parameter validation and reasonable defaults.'
+    - 'Create visualization modules for state, belief, and performance metrics.'
+    - 'Use standard numerical libraries (numpy, scipy) for mathematical operations.'
+    - 'Implement unit tests to verify correctness of each component.'
+
+  running-experiments:
+    - 'Implement the POMDP with Active Inference components from scratch or using appropriate libraries.'
+    - 'The implementation should include both the generative model and the inference algorithms.'
+    - 'For all strings you instantiate you must use triple quotes.'
+    - 'Use numpy, scipy, or pytorch for mathematical operations.'
+    - 'Create a simulation environment to test the thermal control system.'
+    - 'Compare different inference methods and approximations for computing the free energy.'
+    - 'Test the system under various environmental conditions and disturbances.'
+    - 'Evaluate the system''s ability to maintain the target temperature under different scenarios.'
+    - 'Record metrics like time to convergence, stability, and energy efficiency.'
+    - 'Generate visualizations of belief states, policy selection, and system behavior.'
+    - 'Your code should be modular, well-documented, and reusable.'
+    - 'Include unit tests to verify the correctness of your implementation.'
+    - 'Execute the code to produce real results, not just theoretical descriptions.'
+    - 'Save visualization outputs as artifacts for inclusion in the paper.'
+
+  results-interpretation:
+    - 'Analyze how well the system maintains temperature homeostasis.'
+    - 'Evaluate the effectiveness of the Active Inference framework compared to traditional control approaches.'
+    - 'Assess the computational efficiency of your implementation.'
+    - 'Interpret the belief updating process and how it relates to sensory inputs.'
+    - 'Analyze how Expected Free Energy guides action selection in different scenarios.'
+    - 'Identify limitations and potential improvements to your implementation.'
+    - 'Quantify performance using appropriate metrics with statistical analysis.'
+    - 'Compare results across different experimental conditions.'
+    - 'Generate tables summarizing key performance indicators.'
+
+  report-writing:
+    - 'Clearly present the mathematical formulation of Active Inference in the context of the thermal homeostasis POMDP.'
+    - 'Include detailed derivations of the Variational Free Energy and Expected Free Energy calculations.'
+    - 'Thoroughly document your implementation with pseudocode and actual code snippets.'
+    - 'Present the results of your experiments with clear visualizations and interpretation.'
+    - 'Discuss the implications of your findings for both Active Inference theory and practical applications.'
+    - 'Compare your approach with traditional control methods like PID controllers or optimal control.'
+    - 'Suggest future research directions and extensions of your work.'
+    - 'Include an appendix with full implementation details and additional results.'
+    - 'Ensure the paper is well-structured with proper citations to relevant literature.'
+    - 'Include clear figures, tables, and mathematical notation.'
+    - 'Write a compelling abstract that summarizes the key contributions.'
+    - 'Provide a comprehensive conclusion that ties together the theoretical and practical aspects.' 

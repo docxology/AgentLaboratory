@@ -1,343 +1,584 @@
 """
 Professor agent for the Agent Laboratory.
 
-This module provides the ProfessorAgent class, responsible for research planning
-and report writing in the Agent Laboratory.
+This module defines the ProfessorAgent class that implements a professor-like agent
+for directing and evaluating research.
 """
 
+from typing import Dict, Any, Optional, List
 import os
-from typing import Dict, List, Any, Optional, Union
 import logging
+import time
 
-from agent_lab.agents.base_agent import BaseAgent
+from agent_lab.core.base_agent import BaseAgent
 from agent_lab.core.llm_interface import LLMInterface
 
+logger = logging.getLogger(__name__)
 
 class ProfessorAgent(BaseAgent):
-    """
-    Professor agent responsible for research planning and report writing.
+    """Professor agent for directing research and synthesizing knowledge.
     
-    This agent acts as a senior researcher guiding the research process,
-    formulating research plans, analyzing results, and writing reports.
+    This agent acts as the lead researcher, directing the research process,
+    synthesizing information, and coordinating other agents.
     """
     
     def __init__(
         self,
-        model: str = "gpt-4o-mini",
         api_key: Optional[str] = None,
-        deepseek_api_key: Optional[str] = None,
-        notes: Optional[Dict[str, List[str]]] = None,
-        max_steps: int = 10,
-        temperature: float = 0.7,
-        logger: Optional[logging.Logger] = None
+        config: Optional[Dict[str, Any]] = None
     ):
-        """
-        Initialize the professor agent.
+        """Initialize the professor agent.
         
         Args:
-            model: LLM model to use
-            api_key: OpenAI API key
-            deepseek_api_key: DeepSeek API key
-            notes: Task notes for different phases
-            max_steps: Maximum steps to execute
-            temperature: Sampling temperature
-            logger: Logger instance
+            api_key: API key for the LLM service
+            config: Configuration for the agent
         """
+        # Extract parameters from config to match BaseAgent's expected parameters
+        model = config.get("llm_backend", "gpt-4o-mini") if config else "gpt-4o-mini"
+        notes = config.get("task_notes", {}) if config else {}
+        max_steps = config.get("max_steps", 10) if config else 10
+        
+        # Initialize base agent with the extracted parameters
         super().__init__(
-            name="professor",
             model=model,
-            api_key=api_key,
-            deepseek_api_key=deepseek_api_key,
             notes=notes,
             max_steps=max_steps,
-            temperature=temperature,
-            logger=logger
-        )
-        
-        # Create LLM interface for model inference
-        self.llm_interface = LLMInterface(
-            model_name=model,
             api_key=api_key,
-            deepseek_api_key=deepseek_api_key,
-            temperature=temperature,
             logger=logger
         )
+        
+        # Store the full config for later use
+        self.config = config or {}
+        
+        # Set agent-specific properties
+        self.research_area = config.get("research_area", "artificial intelligence") if config else "artificial intelligence"
+        self.expertise = config.get("expertise", ["machine learning", "computer science"]) if config else ["machine learning", "computer science"]
+        
+        # Initialize the agent's state
+        self.state.update({
+            "research_plan": None,
+            "literature_review": None,
+            "current_findings": [],
+            "research_questions": []
+        })
+        
+        logger.info(f"Initialized professor agent: {self.research_area}")
     
-    def override_inference(
-        self,
-        query: str,
-        temperature: Optional[float] = None
-    ) -> str:
-        """
-        Run model inference with a custom query.
+    def analyze_literature(self, arxiv_papers: List[Dict[str, str]], 
+                           semantic_scholar_papers: List[Dict[str, Any]], 
+                           research_topic: str) -> str:
+        """Analyze literature for a research topic.
         
         Args:
-            query: Query text
-            temperature: Optional temperature override
+            arxiv_papers: List of papers from arXiv
+            semantic_scholar_papers: List of papers from Semantic Scholar
+            research_topic: Research topic to analyze
             
         Returns:
-            Model response
+            Analysis of the literature
         """
-        temp = temperature if temperature is not None else self.temperature
-        return self.llm_interface.get_completion(query, temperature=temp)
+        logger.info(f"Professor agent analyzing literature for: {research_topic}")
+        
+        # Call the base method to get the analysis
+        analysis = super().analyze_literature(arxiv_papers, semantic_scholar_papers, research_topic)
+        
+        # Update the agent's state
+        self.state["literature_review"] = analysis
+        
+        # Extract research questions from the literature
+        research_questions = self._extract_research_questions(analysis)
+        self.state["research_questions"] = research_questions
+        
+        return analysis
     
-    def generate_readme(
-        self,
-        research_topic: str,
-        research_plan: str,
-        results: str,
-        output_dir: str
-    ) -> str:
-        """
-        Generate a README file for the research project.
+    def _extract_research_questions(self, literature_analysis: str) -> List[str]:
+        """Extract research questions from literature analysis.
         
         Args:
-            research_topic: Topic of the research
-            research_plan: Research plan
-            results: Research results
-            output_dir: Output directory for the README
+            literature_analysis: Literature analysis text
             
         Returns:
-            Path to the generated README file
+            List of research questions
         """
-        prompt = f"""Create a comprehensive README.md file for a research project with the following details:
+        if not self.llm:
+            logger.error("LLM interface not initialized")
+            return []
+        
+        prompt = f"""Based on the following literature analysis, identify and list the top 5 research questions that could be addressed in this field:
 
-Research Topic: {research_topic}
+{literature_analysis}
 
-Research Plan:
-{research_plan}
-
-Results:
-{results}
-
-Include the following sections in the README:
-1. Introduction
-2. Research Objectives
-3. Methodology
-4. Key Findings
-5. Conclusions
-6. References
-
-Format the README using Markdown syntax and ensure it's well-structured and professional.
+FORMAT: Provide exactly 5 research questions, one per line, beginning with "Research Question:"
 """
         
-        readme_content = self.override_inference(prompt, temperature=0.3)
-        readme_path = os.path.join(output_dir, "README.md")
+        # Call the LLM
+        output = self.llm.generate(prompt)
         
-        with open(readme_path, "w") as f:
-            f.write(readme_content)
+        # Parse the output
+        questions = []
+        for line in output.split("\n"):
+            if line.startswith("Research Question:"):
+                questions.append(line.replace("Research Question:", "").strip())
         
-        return readme_path
+        return questions
+    
+    def complete_phase(self, phase_name: str, task_notes: str) -> str:
+        """Complete a phase of the research workflow.
+        
+        Args:
+            phase_name: Name of the phase to complete
+            task_notes: Task notes for the phase
+            
+        Returns:
+            Output from completing the phase
+        """
+        logger.info(f"Professor agent completing phase: {phase_name}")
+        
+        # Add additional context based on the phase
+        context = ""
+        if phase_name == "plan-formulation":
+            if self.state.get("literature_review"):
+                context = f"\nLiterature Review:\n{self.state['literature_review'][:1000]}...\n"
+                context += f"\nResearch Questions:\n" + "\n".join([f"- {q}" for q in self.state.get("research_questions", [])])
+        
+        elif phase_name == "data-preparation":
+            if self.state.get("research_plan"):
+                context = f"\nResearch Plan:\n{self.state['research_plan'][:1000]}...\n"
+            
+            # Add specific guidance for POMDP implementation
+            context += "\n\nFor the POMDP with Active Inference implementation, please specify:\n"
+            context += "1. The formal mathematical model for a 5-state POMDP with 3 control actions and 10 observation levels\n"
+            context += "2. How to calculate Variational Free Energy (VFE) for state estimation\n"
+            context += "3. How to calculate Expected Free Energy (EFE) for action selection\n"
+            context += "4. The thermal homeostasis dynamics (how temperature changes given states and actions)\n"
+            context += "5. The parameters needed for the model (e.g., transition matrices, observation matrices)\n"
+        
+        elif phase_name == "code-implementation":
+            if self.state.get("research_plan"):
+                context = f"\nResearch Plan:\n{self.state['research_plan'][:1000]}...\n"
+            if self.state.get("data_preparation"):
+                context += f"\nData Preparation:\n{self.state['data_preparation'][:1000]}...\n"
+            
+            # Add detailed guidance for POMDP code implementation
+            context += "\n\nIMPORTANT GUIDELINES FOR CODE IMPLEMENTATION:\n"
+            context += "1. Implement a complete POMDP with Active Inference for thermal homeostasis\n"
+            context += "2. The implementation must include:\n"
+            context += "   - A generative model with 5 latent temperature states\n"
+            context += "   - 3 control actions (cool, nothing, heat)\n"
+            context += "   - 10 discrete observation levels (cold to hot)\n"
+            context += "   - Functions to compute Variational Free Energy for state estimation\n"
+            context += "   - Functions to compute Expected Free Energy for action selection\n"
+            context += "3. Use numpy for matrix operations and matplotlib for visualizations\n"
+            context += "4. Include clear docstrings and comments throughout the code\n"
+            context += "5. Make the code modular with well-defined functions and classes\n"
+            context += "6. Create a main function to demonstrate the model's behavior\n"
+            context += "7. Use triple backticks to format code blocks: ```python\n# Your code here\n```\n"
+        
+        elif phase_name == "running-experiments":
+            if self.state.get("code_implementation"):
+                context = f"\nCode Implementation:\n{self.state['code_implementation'][:1000]}...\n"
+            
+            # Add specific guidance for POMDP experiments
+            context += "\n\nIMPORTANT GUIDELINES FOR RUNNING EXPERIMENTS:\n"
+            context += "1. Run simulations with the POMDP Active Inference model to demonstrate thermal homeostasis\n"
+            context += "2. Experiments should include:\n"
+            context += "   - Tracking belief states over time\n"
+            context += "   - Showing how actions are selected based on Expected Free Energy\n"
+            context += "   - Demonstrating the system's ability to maintain temperature around a target value\n"
+            context += "   - Comparing performance with different parameters or conditions\n"
+            context += "3. Generate clear visualizations of the results (state beliefs, actions, observations, etc.)\n"
+            context += "4. Present quantitative metrics to evaluate performance (e.g., average distance from target state)\n"
+            context += "5. Ensure all code can run efficiently with the provided time constraints\n"
+            context += "6. Use triple backticks to format code blocks: ```python\n# Your code here\n```\n"
+        
+        elif phase_name == "results-interpretation":
+            if self.state.get("experiments"):
+                context = f"\nExperiment Results:\n{self.state['experiments'][:1000]}...\n"
+            
+            # Add guidance for interpreting POMDP results
+            context += "\n\nGUIDELINES FOR INTERPRETING RESULTS:\n"
+            context += "1. Analyze how well the system maintains temperature around the target state\n"
+            context += "2. Discuss the effectiveness of using Active Inference (VFE and EFE) for control\n"
+            context += "3. Compare with potential alternative approaches (e.g., PID control or MPC)\n"
+            context += "4. Identify strengths and limitations of the implementation\n"
+            context += "5. Discuss computational efficiency and scalability considerations\n"
+            context += "6. Suggest potential improvements or extensions to the model\n"
+        
+        elif phase_name == "report-writing":
+            if self.state.get("results_interpretation"):
+                context = f"\nResults Interpretation:\n{self.state['results_interpretation'][:1000]}...\n"
+            
+            # Add guidance for comprehensive report writing
+            context += "\n\nGUIDELINES FOR REPORT WRITING:\n"
+            context += "1. Write a comprehensive paper with standard scientific structure\n"
+            context += "2. Include clear mathematical formulations of Variational Free Energy and Expected Free Energy\n"
+            context += "3. Present the POMDP model with precise notation for states, actions, and observations\n"
+            context += "4. Include pseudocode and/or mathematical algorithms for key components\n"
+            context += "5. Present experimental results with clear visualizations\n"
+            context += "6. Discuss implications for Active Inference theory and practical applications\n"
+            context += "7. Conclude with limitations and future research directions\n"
+        
+        # Call the base method with additional context
+        detailed_task_notes = task_notes + context
+        output = super().complete_phase(phase_name, detailed_task_notes)
+        
+        # Post-process the output for running-experiments phase to ensure proper code formatting
+        if phase_name == "running-experiments":
+            output = self._ensure_code_formatting(output)
+        
+        # Update the agent's state based on the phase
+        if phase_name == "plan-formulation":
+            self.state["research_plan"] = output
+        elif phase_name == "data-preparation":
+            self.state["data_preparation"] = output
+        elif phase_name == "code-implementation":
+            self.state["code_implementation"] = output
+        elif phase_name == "running-experiments":
+            self.state["experiments"] = output
+        elif phase_name == "results-interpretation":
+            self.state["results_interpretation"] = output
+        elif phase_name == "report-writing":
+            self.state["report"] = output
+        
+        # Save the output to disk for tracking
+        self._save_phase_output(phase_name, output)
+        
+        return output
+    
+    def _ensure_code_formatting(self, text: str) -> str:
+        """Ensure code blocks are properly formatted with triple backticks.
+        
+        Args:
+            text: Text possibly containing code blocks
+            
+        Returns:
+            Text with properly formatted code blocks
+        """
+        import re
+        
+        # Check if there are already properly formatted code blocks
+        if "```python" in text:
+            return text
+            
+        # Look for potential code blocks (indented code, or code without proper formatting)
+        code_pattern = r'((?:^[ \t]*import\s+[\w\.]+|^[ \t]*from\s+[\w\.]+\s+import|\s*class\s+\w+|\s*def\s+\w+)(?:\s*\()?(?:\s*.*\)?)?:(?:\s*$)(?:[\s\S]*?)(?:(?:^[ \t]*$)|(?:^[ \t]*[^\s#])|\Z))'
+        
+        # Helper function to process matched code blocks
+        def format_code_block(match):
+            code = match.group(1).strip()
+            if not code:
+                return match.group(0)
+            return f"\n```python\n{code}\n```\n"
+            
+        # Replace potential code blocks with properly formatted ones
+        formatted_text = re.sub(code_pattern, format_code_block, text, flags=re.MULTILINE)
+        
+        return formatted_text
+    
+    def _save_phase_output(self, phase_name: str, content: str) -> None:
+        """Save the phase output to disk for tracking.
+        
+        Args:
+            phase_name: Name of the phase
+            content: Content to save
+        """
+        # Create outputs directory if it doesn't exist
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        output_dir = os.environ.get("AGENT_OUTPUT_DIR", "outputs/professor_outputs")
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Create a filename with phase name and timestamp
+        filename = f"{output_dir}/{phase_name}_{timestamp}.md"
+        
+        # Write the content to the file
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(f"# Phase: {phase_name}\n\n")
+            f.write(f"Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"Content length: {len(content)} characters\n")
+            f.write(f"Word count: {len(content.split())} words\n\n")
+            f.write("---\n\n")
+            f.write(content)
+        
+        logger.info(f"Saved {phase_name} output to {filename} [{len(content)} chars, {len(content.split())} words]")
     
     def role_description(self) -> str:
-        """
-        Get the role description for the professor agent.
+        """Get the role description for the agent.
         
         Returns:
-            Role description string
+            str: The role description
         """
-        return """You are an expert Professor Agent in the Agent Laboratory. Your role is to lead the research process with expertise in research methodologies, experimental design, and academic writing. You excel at formulating research plans, reviewing literature, designing experiments, interpreting results, and writing comprehensive reports. As a professor, you should use precise technical language appropriate to the research domain and follow academic standards in your approach to research problems."""
+        return (
+            "knowledgeable professor and scientific advisor who is an expert in the "
+            "field. You are guiding a research project, helping to organize the research, "
+            "providing expert insights, and evaluating the quality of work."
+        )
     
-    def context(self, phase: str) -> str:
-        """
-        Get context information for a specific research phase.
+    def command_descriptions(self, phase: str) -> str:
+        """Get the command descriptions for a specific phase.
         
         Args:
-            phase: Name of the research phase
+            phase: The current phase
             
         Returns:
-            Context string for the specified phase
+            str: The command descriptions
         """
-        if phase == "report-writing":
-            return """For the report writing phase, focus on synthesizing all the research findings into a comprehensive academic report. Make sure to include:
-1. An executive summary of the research
-2. Clear documentation of the methodology
-3. Detailed presentation of results with appropriate visualizations
-4. Discussion of the implications and limitations
-5. Conclusions and recommendations for future work
-6. Complete references in an appropriate academic style
-
-Your report should follow academic writing conventions and maintain scientific rigor throughout."""
-        
+        if phase == "plan-formulation":
+            return (
+                "You are to help develop a comprehensive research plan. Your task is to:\n"
+                "1. Analyze the research topic and break it down into manageable components\n"
+                "2. Identify the key theoretical concepts that need to be incorporated\n"
+                "3. Outline a step-by-step approach to implementation\n"
+                "4. Suggest appropriate methodologies and evaluation metrics\n"
+                "5. Identify potential challenges and propose solutions"
+            )
+        elif phase == "data-preparation":
+            return (
+                "You are to help with data preparation. Your task is to:\n"
+                "1. Define appropriate data structures for the problem\n"
+                "2. Design generators or loaders for synthetic or real data\n"
+                "3. Suggest preprocessing steps and transformations\n"
+                "4. Ensure data quality and address potential issues\n"
+                "5. Provide guidance on appropriate testing data"
+            )
+        elif phase == "running-experiments":
+            return (
+                "You are to help with experiment execution. Your task is to:\n"
+                "1. Design a series of experiments to test the implementation\n"
+                "2. Provide guidance on parameter settings and configurations\n"
+                "3. Suggest appropriate metrics for evaluation\n"
+                "4. Help interpret intermediate results\n"
+                "5. Recommend adjustments to improve performance"
+            )
+        elif phase == "results-interpretation":
+            return (
+                "You are to help with interpreting results. Your task is to:\n"
+                "1. Analyze the experimental outcomes\n"
+                "2. Compare results with theoretical expectations\n"
+                "3. Identify strengths and limitations of the approach\n"
+                "4. Draw meaningful conclusions\n"
+                "5. Suggest future research directions"
+            )
+        elif phase == "report-writing":
+            return (
+                "You are to help with research documentation. Your task is to:\n"
+                "1. Structure the research report\n"
+                "2. Ensure clarity and precision in the presentation\n"
+                "3. Suggest improvements to explanations and visualizations\n"
+                "4. Maintain scientific rigor throughout the document\n"
+                "5. Provide feedback on the overall quality and completeness"
+            )
         else:
-            return f"""You are currently in the {phase} phase of the research process. Focus on providing detailed, well-structured, and academically rigorous output appropriate to this phase. Your responses should reflect deep expertise in the research topic and follow scientific methodological principles. When appropriate, suggest specific techniques, tools, or approaches that would be suitable for this research phase."""
+            return (
+                "You are a scientific advisor providing expert guidance and feedback "
+                "based on your extensive knowledge in the field."
+            )
     
     def example_command(self, phase: str) -> str:
-        """
-        Get an example command for a specific research phase.
+        """Get an example command for a specific phase.
         
         Args:
-            phase: Name of the research phase
+            phase: The current phase
             
         Returns:
-            Example command string for the specified phase
+            str: The example command
         """
         if phase == "plan-formulation":
-            return "Develop a comprehensive research plan to investigate [research topic], including objectives, methodologies, and expected outcomes."
-        
-        elif phase == "report-writing":
-            return "Generate a complete research report that synthesizes our findings on [research topic], including all standard academic sections."
-        
-        else:
-            return f"Proceed with the {phase} phase of our research on the given topic."
-    
-    def command_descriptions(self, phase: str) -> Dict[str, str]:
-        """
-        Get the command descriptions for a specific research phase.
-        
-        Args:
-            phase: Name of the research phase
-            
-        Returns:
-            Dictionary mapping command names to descriptions
-        """
-        if phase == "plan-formulation":
-            return {
-                "develop_research_plan": "Develop a comprehensive research plan with clear objectives and methodology",
-                "identify_research_questions": "Identify key research questions to be addressed in the study",
-                "outline_methodology": "Outline the proposed methodology for investigating the research topic",
-                "define_success_criteria": "Define criteria for evaluating the success of the research"
-            }
-        
-        elif phase == "literature-review":
-            return {
-                "summarize_key_literature": "Summarize key literature relevant to the research topic",
-                "identify_research_gaps": "Identify gaps in the existing research",
-                "analyze_methodologies": "Analyze methodologies used in previous research",
-                "synthesize_findings": "Synthesize findings from the literature review"
-            }
-        
-        elif phase == "data-preparation":
-            return {
-                "identify_data_sources": "Identify appropriate data sources for the research",
-                "design_data_collection": "Design the data collection process",
-                "create_preprocessing_pipeline": "Create a data preprocessing pipeline",
-                "develop_data_validation": "Develop methods for validating the data"
-            }
-        
+            return (
+                "Example output for plan formulation:\n\n"
+                "# Research Plan: POMDP with Active Inference\n\n"
+                "## 1. Theoretical Foundation\n"
+                "- Define the mathematical framework for POMDP\n"
+                "- Formulate Active Inference principles\n"
+                "- Develop equations for Variational Free Energy and Expected Free Energy\n\n"
+                "## 2. Implementation Approach\n"
+                "- Design the thermal homeostasis system with specified parameters\n"
+                "- Implement belief updating using VFE\n"
+                "- Implement action selection using EFE\n\n"
+                "## 3. Evaluation Strategy\n"
+                "- Define metrics for assessing performance\n"
+                "- Create test scenarios with different environmental conditions\n"
+                "- Compare against baseline approaches\n\n"
+                "## 4. Potential Challenges\n"
+                "- Computational efficiency of belief updating\n"
+                "- Numerical stability in probability calculations\n"
+                "- Parameter tuning for optimal performance"
+            )
         elif phase == "running-experiments":
-            return {
-                "design_experiments": "Design experiments to address the research questions",
-                "implement_methodology": "Implement the proposed methodology",
-                "execute_experiments": "Execute the designed experiments",
-                "document_process": "Document the experimental process and parameters"
-            }
-        
-        elif phase == "results-interpretation":
-            return {
-                "analyze_results": "Analyze the experimental results",
-                "interpret_findings": "Interpret the findings in the context of the research questions",
-                "identify_patterns": "Identify patterns and trends in the data",
-                "assess_implications": "Assess the implications of the results"
-            }
-        
-        elif phase == "report-writing":
-            return {
-                "write_introduction": "Write the introduction section of the research report",
-                "describe_methodology": "Describe the methodology used in the research",
-                "present_results": "Present the results of the research",
-                "discuss_findings": "Discuss the findings and their implications",
-                "draw_conclusions": "Draw conclusions based on the research",
-                "complete_report": "Complete the full research report"
-            }
-        
+            return (
+                "Example output for running experiments:\n\n"
+                "# Experiment Implementation\n\n"
+                "```python\n"
+                "import numpy as np\n"
+                "import matplotlib.pyplot as plt\n\n"
+                "class ThermalPOMDP:\n"
+                "    def __init__(self, num_temp_states=5, num_obs_states=10):\n"
+                "        # Initialize model parameters\n"
+                "        self.num_temp_states = num_temp_states\n"
+                "        self.num_obs_states = num_obs_states\n"
+                "        self.num_actions = 3  # cool, nothing, heat\n\n"
+                "        # Initialize transition and observation matrices\n"
+                "        self.transition_matrix = self._create_transition_matrix()\n"
+                "        self.observation_matrix = self._create_observation_matrix()\n\n"
+                "    def _create_transition_matrix(self):\n"
+                "        # Logic for creating the transition dynamics\n"
+                "        # ...\n\n"
+                "    def update_belief(self, prior_belief, observation, action):\n"
+                "        # Implement belief updating using VFE\n"
+                "        # ...\n\n"
+                "    def select_action(self, current_belief):\n"
+                "        # Implement action selection using EFE\n"
+                "        # ...\n"
+                "```"
+            )
         else:
-            return {
-                "proceed": f"Proceed with the {phase} phase of the research",
-                "summarize": "Summarize the current state of the research",
-                "suggest_next_steps": "Suggest next steps for the research"
-            }
+            return (
+                "I'll provide expert guidance and feedback based on my knowledge "
+                "in the field, tailored to the current research phase."
+            )
+    
+    def context(self, phase: str) -> str:
+        """Get context for a specific phase.
+        
+        Args:
+            phase: The current phase
+            
+        Returns:
+            str: The context
+        """
+        # Research topic from config
+        research_topic = self.notes.get("research-topic", "Unspecified research topic")
+        
+        # Phase-specific notes
+        phase_notes = self.notes.get(phase, [])
+        phase_notes_str = "\n".join([f"- {note}" for note in phase_notes])
+        
+        context = f"Research Topic: {research_topic}\n\n"
+        
+        if phase_notes_str:
+            context += f"Guidelines for {phase}:\n{phase_notes_str}\n\n"
+        
+        # Add specific context based on the phase
+        if phase == "plan-formulation":
+            context += (
+                "We are at the beginning of the research project and need to develop "
+                "a comprehensive plan. The focus should be on both theoretical formulation "
+                "and practical implementation details."
+            )
+        elif phase == "data-preparation":
+            context += (
+                "We need to design appropriate data structures and generators for "
+                "the thermal homeostasis system, including transition dynamics and "
+                "observation models."
+            )
+        elif phase == "running-experiments":
+            context += (
+                "We need to implement the POMDP with Active Inference and run "
+                "experiments to test its effectiveness in maintaining thermal homeostasis."
+            )
+        elif phase == "results-interpretation":
+            context += (
+                "We need to analyze the results of our experiments and interpret "
+                "them in the context of Active Inference theory."
+            )
+        elif phase == "report-writing":
+            context += (
+                "We need to document our research findings in a clear and comprehensive "
+                "manner, including both theoretical foundations and empirical results."
+            )
+        
+        return context
     
     def phase_prompt(self, phase: str) -> str:
-        """
-        Get the prompt for a specific research phase.
+        """Get the prompt for a specific phase.
         
         Args:
-            phase: Name of the research phase
+            phase: The current phase
             
         Returns:
-            Prompt string for the specified phase
+            str: The prompt
         """
         if phase == "plan-formulation":
-            return """Please develop a comprehensive research plan for investigating the provided research topic. Your plan should include:
-
-1. Clear research objectives and questions
-2. Theoretical framework underpinning the research
-3. Detailed methodology including:
-   - Research design
-   - Data collection methods
-   - Analysis approaches
-4. Expected outcomes and deliverables
-5. Timeline for completing each phase of the research
-6. Potential challenges and mitigation strategies
-
-Format your plan in a clear, well-structured manner suitable for academic research."""
-        
-        elif phase == "literature-review":
-            return """Please conduct a comprehensive literature review on the research topic. Your review should:
-
-1. Identify key concepts and theories relevant to the topic
-2. Summarize and synthesize existing research
-3. Identify methodologies used in previous studies
-4. Highlight gaps in current knowledge
-5. Establish how this research will contribute to the field
-6. Provide a critical analysis of the strength of existing evidence
-
-Please organize the literature review by themes or chronologically as appropriate for the topic."""
-        
+            return (
+                "Please develop a comprehensive research plan for implementing a POMDP "
+                "with Active Inference for thermal homeostasis. The plan should include "
+                "theoretical foundations, implementation approach, evaluation strategy, "
+                "and potential challenges."
+            )
         elif phase == "data-preparation":
-            return """Please develop a detailed data preparation plan for this research. Your plan should include:
-
-1. Identification of required data sources
-2. Data collection methods and tools
-3. Data cleaning and preprocessing steps
-4. Feature selection or engineering approaches
-5. Data validation and quality assurance methods
-6. Data storage and management plan
-7. Ethical considerations related to data handling
-
-Please be specific about tools, techniques, and methodologies appropriate for this research topic."""
-        
+            return (
+                "Please design the data structures and generators needed for the thermal "
+                "homeostasis POMDP. This should include transition dynamics, observation "
+                "models, and prior beliefs."
+            )
         elif phase == "running-experiments":
-            return """Please design and outline the experimental protocol for this research. Your experimental design should include:
-
-1. Clear definition of experimental variables
-2. Experimental setup and configuration
-3. Implementation details of the methodology
-4. Tools and environments needed for the experiments
-5. Procedures for recording and documenting results
-6. Methods for ensuring reproducibility
-7. Contingency plans for potential experimental issues
-
-Please provide a step-by-step guide that would allow other researchers to replicate your experiments."""
-        
+            return (
+                "Please implement the POMDP with Active Inference for thermal homeostasis "
+                "and design experiments to test its effectiveness. Include code for "
+                "the implementation and experimental setup."
+            )
         elif phase == "results-interpretation":
-            return """Please provide a comprehensive interpretation of the research results. Your interpretation should include:
-
-1. Summary of key findings
-2. Analysis of patterns and trends in the data
-3. Statistical significance of results (if applicable)
-4. Comparison with findings from previous research
-5. Discussion of how the results address the research questions
-6. Identification of limitations in the results
-7. Implications of the findings for theory and practice
-
-Please support your interpretation with specific references to the data and use appropriate analytical frameworks."""
-        
+            return (
+                "Please analyze the results of our experiments with the POMDP Active "
+                "Inference model for thermal homeostasis. Interpret the findings in "
+                "the context of theoretical expectations and identify strengths and "
+                "limitations."
+            )
         elif phase == "report-writing":
-            return """Please write a comprehensive research report synthesizing all aspects of this research project. Your report should include:
-
-1. Abstract summarizing the research
-2. Introduction with background and research questions
-3. Literature review section
-4. Detailed methodology
-5. Results presentation with appropriate visualizations
-6. Discussion of findings and their implications
-7. Conclusion including recommendations for future work
-8. Complete references in academic format
-9. Appendices with supplementary material as needed
-
-Format the report following academic conventions and ensure it communicates the research clearly to both expert and informed non-expert audiences."""
-        
+            return (
+                "Please outline a comprehensive research report documenting our work "
+                "on implementing a POMDP with Active Inference for thermal homeostasis. "
+                "The report should include theoretical foundations, implementation details, "
+                "experimental results, and conclusions."
+            )
         else:
-            return f"""Please proceed with the {phase} phase of the research process. Focus on producing high-quality, academically rigorous work that advances our understanding of the research topic. Provide detailed, well-structured output that demonstrates expertise in the subject matter.""" 
+            return (
+                "Please provide expert guidance on our research project based on your "
+                "extensive knowledge in the field."
+            )
+    
+    def evaluate_student_work(self, work: str, phase: str) -> str:
+        """Evaluate student work for a specific phase.
+        
+        Args:
+            work: The student's work
+            phase: The current phase
+            
+        Returns:
+            str: Evaluation of the student's work
+        """
+        system_message = (
+            f"You are a professor evaluating student work on a research project. "
+            f"The current phase is '{phase}'. Provide constructive feedback, highlighting "
+            f"strengths and areas for improvement. Be thorough but encouraging."
+        )
+        
+        prompt = f"Please evaluate the following student work for the {phase} phase:\n\n{work}"
+        
+        response = self.override_inference(prompt, temperature=0.3)
+        
+        return response
+    
+    def provide_feedback(self, work: str, evaluation: str) -> str:
+        """Provide feedback on student work based on an evaluation.
+        
+        Args:
+            work: The student's work
+            evaluation: Evaluation of the student's work
+            
+        Returns:
+            str: Feedback for the student
+        """
+        system_message = (
+            "You are a professor providing feedback to a student on their research work. "
+            "Based on the evaluation, provide constructive feedback that will help the "
+            "student improve their work. Be specific, actionable, and encouraging."
+        )
+        
+        prompt = (
+            f"Based on the following evaluation of student work:\n\n{evaluation}\n\n"
+            f"Provide feedback to help the student improve their work."
+        )
+        
+        response = self.override_inference(prompt, temperature=0.3)
+        
+        return response 

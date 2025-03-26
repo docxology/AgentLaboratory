@@ -17,451 +17,286 @@ import tiktoken
 import google.generativeai as genai
 from huggingface_hub import InferenceClient
 
+logger = logging.getLogger(__name__)
+
 class LLMInterface:
     """Interface for interacting with language models."""
     
     def __init__(
-        self, 
-        model: str = "gpt-4o-mini", 
+        self,
+        model: str = "gpt-4o-mini",
         api_key: Optional[str] = None,
         deepseek_api_key: Optional[str] = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-        timeout: int = 120
+        config: Optional[Dict[str, Any]] = None
     ):
         """Initialize the LLM interface.
         
         Args:
-            model: The model to use (default: "gpt-4o-mini")
-            api_key: OpenAI API key
-            deepseek_api_key: DeepSeek API key
-            temperature: Sampling temperature (default: 0.7)
-            max_tokens: Maximum number of tokens to generate (default: 2048)
-            timeout: Timeout for API requests in seconds (default: 120)
-            
-        Raises:
-            ValueError: If no API key is provided for the selected model
+            model: Name of the model to use
+            api_key: API key for accessing the model
+            deepseek_api_key: API key for DeepSeek models
+            config: Additional configuration
         """
         self.model = model
-        self.temperature = temperature
-        self.max_tokens = max_tokens
-        self.timeout = timeout
+        self.config = config or {}
         
-        # Use provided API keys or try to get from environment
+        # Initialize the API key
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.deepseek_api_key = deepseek_api_key or os.environ.get("DEEPSEEK_API_KEY")
         
-        # Validate API keys based on model
-        if "gpt" in self.model and not self.api_key:
-            raise ValueError("OpenAI API key required for GPT models")
-        elif "deepseek" in self.model and not self.deepseek_api_key:
-            raise ValueError("DeepSeek API key required for DeepSeek models")
-        
-        # Initialize backend factory
-        self.backend_factory = LLMBackendFactory()
-        
-        # Get appropriate backend
-        self.backend = self.backend_factory.get_backend(
-            model_name=model,
-            api_key=self.api_key if "deepseek" not in model.lower() else self.deepseek_api_key,
-            temperature=temperature,
-            timeout=timeout
-        )
-        
-        # Setup logger
-        self.logger = logging.getLogger(__name__)
-        
-        # Track usage for metrics
-        self.total_tokens = 0
-        self.total_prompt_tokens = 0
-        self.total_completion_tokens = 0
-        self.total_requests = 0
-    
-    def get_model_provider(self) -> str:
-        """Get the provider for the current model.
-        
-        Returns:
-            str: The model provider ("openai", "deepseek", or "unknown")
-        """
-        if "gpt" in self.model:
-            return "openai"
-        elif "deepseek" in self.model:
-            return "deepseek"
-        return "unknown"
-    
-    def completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        stop_sequences: Optional[List[str]] = None
-    ) -> str:
-        """Get a completion from the language model.
-        
-        Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message for chat models
-            temperature: Optional temperature override
-            max_tokens: Optional max tokens override
-            stop_sequences: Optional list of stop sequences
-            
-        Returns:
-            str: The model's response
-            
-        Raises:
-            Exception: If the API request fails
-        """
-        # Use provided values or instance defaults
-        temp = temperature if temperature is not None else self.temperature
-        tokens = max_tokens if max_tokens is not None else self.max_tokens
-        
-        provider = self.get_model_provider()
-        
-        if provider == "openai":
-            return self._openai_completion(
-                prompt=prompt,
-                system_message=system_message,
-                temperature=temp,
-                max_tokens=tokens,
-                stop_sequences=stop_sequences
-            )
-        elif provider == "deepseek":
-            return self._deepseek_completion(
-                prompt=prompt,
-                system_message=system_message,
-                temperature=temp,
-                max_tokens=tokens,
-                stop_sequences=stop_sequences
-            )
+        if not self.api_key and not self.deepseek_api_key:
+            logger.error("No API key provided for LLM interface")
         else:
-            raise ValueError(f"Unsupported model provider for {self.model}")
+            api_type = "OpenAI API key" if self.api_key else "DeepSeek API key"
+            api_key_length = len(self.api_key) if self.api_key else len(self.deepseek_api_key)
+            logger.info(f"LLM interface initialized with {api_type} (length: {api_key_length})")
     
-    def _openai_completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-        stop_sequences: Optional[List[str]] = None
-    ) -> str:
-        """Get a completion from OpenAI.
+    def generate(self, prompt: str, **kwargs) -> str:
+        """Generate text based on the prompt.
         
         Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message
-            temperature: Sampling temperature
-            max_tokens: Maximum number of tokens to generate
-            stop_sequences: Optional list of stop sequences
+            prompt: The input prompt
+            **kwargs: Additional parameters for the model
             
         Returns:
-            str: The model's response
-            
-        Raises:
-            Exception: If the API request fails
+            The generated text
         """
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-        
-        messages = []
-        if system_message:
-            messages.append({"role": "system", "content": system_message})
-        messages.append({"role": "user", "content": prompt})
-        
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens
-        }
-        
-        if stop_sequences:
-            payload["stop"] = stop_sequences
-        
-        response = requests.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=self.timeout
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"OpenAI API error: {response.status_code} - {response.text}")
-        
-        response_data = response.json()
-        return response_data["choices"][0]["message"]["content"]
-    
-    def _deepseek_completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-        stop_sequences: Optional[List[str]] = None
-    ) -> str:
-        """Get a completion from DeepSeek.
-        
-        Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message
-            temperature: Sampling temperature
-            max_tokens: Maximum number of tokens to generate
-            stop_sequences: Optional list of stop sequences
-            
-        Returns:
-            str: The model's response
-            
-        Raises:
-            Exception: If the API request fails
-        """
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.deepseek_api_key}"
-        }
-        
-        messages = []
-        if system_message:
-            messages.append({"role": "system", "content": system_message})
-        messages.append({"role": "user", "content": prompt})
-        
-        payload = {
-            "model": self.model if "deepseek" in self.model else "deepseek-chat",
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens
-        }
-        
-        if stop_sequences:
-            payload["stop"] = stop_sequences
-        
-        response = requests.post(
-            "https://api.deepseek.com/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=self.timeout
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"DeepSeek API error: {response.status_code} - {response.text}")
-        
-        response_data = response.json()
-        return response_data["choices"][0]["message"]["content"]
-    
-    def stream_completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        stop_sequences: Optional[List[str]] = None,
-        callback: Optional[Callable[[str], None]] = None
-    ) -> str:
-        """Stream a completion from the language model.
-        
-        Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message for chat models
-            temperature: Optional temperature override
-            max_tokens: Optional max tokens override
-            stop_sequences: Optional list of stop sequences
-            callback: Optional callback function for each chunk
-            
-        Returns:
-            str: The model's complete response
-            
-        Raises:
-            Exception: If the API request fails
-        """
-        # Use provided values or instance defaults
-        temp = temperature if temperature is not None else self.temperature
-        tokens = max_tokens if max_tokens is not None else self.max_tokens
-        
-        provider = self.get_model_provider()
-        
-        if provider == "openai":
-            return self._openai_stream_completion(
-                prompt=prompt,
-                system_message=system_message,
-                temperature=temp,
-                max_tokens=tokens,
-                stop_sequences=stop_sequences,
-                callback=callback
-            )
-        elif provider == "deepseek":
-            return self._deepseek_stream_completion(
-                prompt=prompt,
-                system_message=system_message,
-                temperature=temp,
-                max_tokens=tokens,
-                stop_sequences=stop_sequences,
-                callback=callback
-            )
+        if "deepseek" in self.model.lower() and self.deepseek_api_key:
+            return self._generate_deepseek(prompt, **kwargs)
         else:
-            raise ValueError(f"Unsupported model provider for {self.model}")
+            return self._generate_openai(prompt, **kwargs)
     
-    def _openai_stream_completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-        stop_sequences: Optional[List[str]] = None,
-        callback: Optional[Callable[[str], None]] = None
-    ) -> str:
-        """Stream a completion from OpenAI.
+    def _generate_openai(self, prompt: str, **kwargs) -> str:
+        """Generate text using the OpenAI API.
         
         Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message
-            temperature: Sampling temperature
-            max_tokens: Maximum number of tokens to generate
-            stop_sequences: Optional list of stop sequences
-            callback: Optional callback function for each chunk
+            prompt: The input prompt
+            **kwargs: Additional parameters for the model
             
         Returns:
-            str: The model's complete response
-            
-        Raises:
-            Exception: If the API request fails
+            The generated text
         """
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
+        try:
+            import openai
+            
+            # Configure the client
+            if self.api_key:
+                client = openai.OpenAI(api_key=self.api_key)
+                
+                # Check for API key validity
+                if not self.api_key.startswith("sk-"):
+                    logger.warning(f"OpenAI API key may be invalid (doesn't start with 'sk-')")
+                
+                # Set default parameters
+                model = kwargs.get("model", self.model)
+                temperature = kwargs.get("temperature", 0.4)
+                max_tokens = kwargs.get("max_tokens", 16000)
+                
+                messages = [
+                    {"role": "system", "content": kwargs.get("system_message", "You are a helpful assistant.")},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                # Estimate token count for input
+                try:
+                    import tiktoken
+                    encoding = tiktoken.encoding_for_model("gpt-4o-mini")
+                    system_tokens = len(encoding.encode(messages[0]["content"]))
+                    user_tokens = len(encoding.encode(prompt))
+                    total_input_tokens = system_tokens + user_tokens
+                    logger.info(f"Estimated token usage - System: {system_tokens}, User: {user_tokens}, Total: {total_input_tokens}")
+                except Exception as e:
+                    logger.warning(f"Failed to estimate token count: {str(e)}")
+                
+                logger.info(f"Calling OpenAI API with model={model}, temp={temperature}, max_tokens={max_tokens}")
+                logger.debug(f"Input prompt size: {len(prompt)} characters")
+                
+                # Log calling location to help with debugging
+                import traceback
+                caller_info = "Unknown"
+                try:
+                    stack = traceback.extract_stack()
+                    if len(stack) >= 2:
+                        caller = stack[-2]
+                        caller_info = f"{caller.filename}:{caller.lineno} in {caller.name}"
+                except Exception:
+                    pass
+                logger.info(f"OpenAI API call initiated from: {caller_info}")
+                
+                # Make the API call
+                start_time = time.time()
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+                call_duration = time.time() - start_time
+                
+                # Extract response and log
+                content = response.choices[0].message.content
+                
+                # Log token usage if available
+                usage = getattr(response, "usage", None)
+                if usage:
+                    prompt_tokens = getattr(usage, "prompt_tokens", 0)
+                    completion_tokens = getattr(usage, "completion_tokens", 0)
+                    total_tokens = getattr(usage, "total_tokens", 0)
+                    logger.info(f"Token usage - Prompt: {prompt_tokens}, Completion: {completion_tokens}, Total: {total_tokens}")
+                
+                logger.info(f"OpenAI API call completed in {call_duration:.2f}s, response size: {len(content)} characters")
+                
+                if kwargs.get("save_response", False):
+                    # Save response to file for debugging if requested
+                    output_dir = kwargs.get("output_dir", "outputs")
+                    import os
+                    if not os.path.exists(output_dir):
+                        os.makedirs(output_dir)
+                    
+                    timestamp = time.strftime("%Y%m%d_%H%M%S")
+                    filename = f"{output_dir}/openai_response_{timestamp}.json"
+                    
+                    with open(filename, "w") as f:
+                        json.dump({
+                            "model": model,
+                            "request": [m["content"] for m in messages],
+                            "response": content,
+                            "usage": {
+                                "prompt_tokens": prompt_tokens if usage else 0,
+                                "completion_tokens": completion_tokens if usage else 0,
+                                "total_tokens": total_tokens if usage else 0
+                            },
+                            "duration": call_duration
+                        }, f, indent=2)
+                    
+                    logger.info(f"Saved API response to {filename}")
+                
+                return content
+            else:
+                logger.error("No OpenAI API key provided")
+                return "ERROR: OpenAI API key is missing"
         
-        messages = []
-        if system_message:
-            messages.append({"role": "system", "content": system_message})
-        messages.append({"role": "user", "content": prompt})
+        except ImportError:
+            logger.error("Failed to import openai module. Make sure it's installed: pip install openai")
+            return "ERROR: OpenAI module not installed"
         
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": True
-        }
-        
-        if stop_sequences:
-            payload["stop"] = stop_sequences
-        
-        response = requests.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            stream=True,
-            timeout=self.timeout
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"OpenAI API error: {response.status_code} - {response.text}")
-        
-        full_response = ""
-        
-        for line in response.iter_lines():
-            if line:
-                line_text = line.decode("utf-8")
-                if line_text.startswith("data: ") and line_text != "data: [DONE]":
-                    data = json.loads(line_text[6:])
-                    if "choices" in data and len(data["choices"]) > 0:
-                        delta = data["choices"][0].get("delta", {})
-                        if "content" in delta:
-                            content = delta["content"]
-                            full_response += content
-                            if callback:
-                                callback(content)
-        
-        return full_response
+        except Exception as e:
+            logger.error(f"Error generating text with OpenAI API: {str(e)}")
+            return f"ERROR: {str(e)}"
     
-    def _deepseek_stream_completion(
-        self,
-        prompt: str,
-        system_message: Optional[str] = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-        stop_sequences: Optional[List[str]] = None,
-        callback: Optional[Callable[[str], None]] = None
-    ) -> str:
-        """Stream a completion from DeepSeek.
+    def _generate_deepseek(self, prompt: str, **kwargs) -> str:
+        """Generate text using the DeepSeek API.
         
         Args:
-            prompt: The prompt to send to the model
-            system_message: Optional system message
-            temperature: Sampling temperature
-            max_tokens: Maximum number of tokens to generate
-            stop_sequences: Optional list of stop sequences
-            callback: Optional callback function for each chunk
+            prompt: The input prompt
+            **kwargs: Additional parameters for the model
             
         Returns:
-            str: The model's complete response
-            
-        Raises:
-            Exception: If the API request fails
+            The generated text
         """
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.deepseek_api_key}"
-        }
+        try:
+            import deepseek
+            
+            # Configure the client
+            if self.deepseek_api_key:
+                client = deepseek.DeepSeek(api_key=self.deepseek_api_key)
+                
+                # Set default parameters
+                model = kwargs.get("model", self.model)
+                temperature = kwargs.get("temperature", 0.7)
+                max_tokens = kwargs.get("max_tokens", 16000)
+                
+                messages = [
+                    {"role": "system", "content": kwargs.get("system_message", "You are a helpful assistant.")},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                # Log input data
+                logger.info(f"Calling DeepSeek API with model={model}, temp={temperature}, max_tokens={max_tokens}")
+                logger.debug(f"Input prompt size: {len(prompt)} characters")
+                
+                # Estimate token count
+                system_chars = len(messages[0]["content"])
+                user_chars = len(prompt)
+                estimated_tokens = (system_chars + user_chars) // 4  # Rough estimate
+                logger.info(f"Estimated input token usage (approximate): {estimated_tokens}")
+                
+                # Log calling location to help with debugging
+                import traceback
+                caller_info = "Unknown"
+                try:
+                    stack = traceback.extract_stack()
+                    if len(stack) >= 2:
+                        caller = stack[-2]
+                        caller_info = f"{caller.filename}:{caller.lineno} in {caller.name}"
+                except Exception:
+                    pass
+                logger.info(f"DeepSeek API call initiated from: {caller_info}")
+                
+                # Make the API call
+                start_time = time.time()
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+                call_duration = time.time() - start_time
+                
+                # Extract response and log
+                content = response.choices[0].message.content
+                logger.info(f"DeepSeek API call completed in {call_duration:.2f}s, response size: {len(content)} characters")
+                
+                if kwargs.get("save_response", False):
+                    # Save response to file for debugging if requested
+                    output_dir = kwargs.get("output_dir", "outputs")
+                    import os
+                    if not os.path.exists(output_dir):
+                        os.makedirs(output_dir)
+                    
+                    timestamp = time.strftime("%Y%m%d_%H%M%S")
+                    filename = f"{output_dir}/deepseek_response_{timestamp}.json"
+                    
+                    with open(filename, "w") as f:
+                        json.dump({
+                            "model": model,
+                            "request": [m["content"] for m in messages],
+                            "response": content,
+                            "estimated_tokens": estimated_tokens,
+                            "duration": call_duration
+                        }, f, indent=2)
+                    
+                    logger.info(f"Saved API response to {filename}")
+                
+                return content
+            else:
+                logger.error("No DeepSeek API key provided")
+                return "ERROR: DeepSeek API key is missing"
         
-        messages = []
-        if system_message:
-            messages.append({"role": "system", "content": system_message})
-        messages.append({"role": "user", "content": prompt})
+        except ImportError:
+            logger.error("Failed to import deepseek module. Make sure it's installed: pip install deepseek")
+            return "ERROR: DeepSeek module not installed"
         
-        payload = {
-            "model": self.model if "deepseek" in self.model else "deepseek-chat",
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": True
-        }
-        
-        if stop_sequences:
-            payload["stop"] = stop_sequences
-        
-        response = requests.post(
-            "https://api.deepseek.com/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            stream=True,
-            timeout=self.timeout
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"DeepSeek API error: {response.status_code} - {response.text}")
-        
-        full_response = ""
-        
-        for line in response.iter_lines():
-            if line:
-                line_text = line.decode("utf-8")
-                if line_text.startswith("data: ") and line_text != "data: [DONE]":
-                    data = json.loads(line_text[6:])
-                    if "choices" in data and len(data["choices"]) > 0:
-                        delta = data["choices"][0].get("delta", {})
-                        if "content" in delta:
-                            content = delta["content"]
-                            full_response += content
-                            if callback:
-                                callback(content)
-        
-        return full_response
+        except Exception as e:
+            logger.error(f"Error generating text with DeepSeek API: {str(e)}")
+            return f"ERROR: {str(e)}"
     
-    def get_usage_stats(self) -> Dict[str, int]:
-        """
-        Get usage statistics.
+    def completion(self, prompt: str, system_message: str = "You are a helpful assistant.", temperature: float = 0.7) -> str:
+        """Generate a completion for the prompt.
         
+        Args:
+            prompt: The input prompt
+            system_message: System message for the model
+            temperature: Temperature for sampling
+            
         Returns:
-            Dictionary with token usage statistics
+            The generated completion
         """
-        return {
-            "total_tokens": self.total_tokens,
-            "total_prompt_tokens": self.total_prompt_tokens,
-            "total_completion_tokens": self.total_completion_tokens,
-            "total_requests": self.total_requests
-        }
+        return self.generate(
+            prompt=prompt,
+            system_message=system_message,
+            temperature=temperature
+        )
 
 
 class LLMBackend(ABC):
@@ -757,20 +592,19 @@ class LLMBackendFactory:
             Number of tokens
         """
         # Use tiktoken for OpenAI models
-        if self.model_name in ["gpt-4o", "gpt-4o-mini", "o1", "o1-preview", "o1-mini", "o3-mini"]:
-            encoding = tiktoken.encoding_for_model("gpt-4")  # Default to gpt-4 encoding
+        if self.model_name in ["gpt-4o", "gpt-4o-mini", "o1", "o1-mini", "o3-mini"]:
+            encoding = tiktoken.encoding_for_model("gpt-4o-mini")  # Use gpt-4o-mini encoding
             return len(encoding.encode(text))
         
         # For other models, use an approximate token count
         # This is a rough approximation - about 4 characters per token
         return len(text) // 4
     
-    def clip_tokens(self, text: str, max_tokens: int = 8000) -> str:
-        """
-        Clip text to a maximum number of tokens
+    def clip_tokens(self, text: str, max_tokens: int = 16000) -> str:
+        """Clip text to a maximum number of tokens.
         
         Args:
-            text: The text to clip
+            text: Text to clip
             max_tokens: Maximum number of tokens
             
         Returns:
@@ -782,8 +616,8 @@ class LLMBackendFactory:
             return text
         
         # For OpenAI models use tiktoken for accurate clipping
-        if self.model_name in ["gpt-4o", "gpt-4o-mini", "o1", "o1-preview", "o1-mini", "o3-mini"]:
-            encoding = tiktoken.encoding_for_model("gpt-4")
+        if self.model_name in ["gpt-4o", "gpt-4o-mini", "o1", "o1-mini", "o3-mini"]:
+            encoding = tiktoken.encoding_for_model("gpt-4o-mini")
             tokens = encoding.encode(text)
             # Get just the last max_tokens
             clipped_tokens = tokens[-max_tokens:]

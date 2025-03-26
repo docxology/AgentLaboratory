@@ -5,11 +5,14 @@ providing common functionality and interfaces.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 import os
 import json
+import logging
 
 from agent_lab.core.llm_interface import LLMInterface
+
+logger = logging.getLogger(__name__)
 
 class BaseAgent(ABC):
     """Base class for all agents in the Agent Laboratory."""
@@ -44,6 +47,12 @@ class BaseAgent(ABC):
         self.step_count = 0
         self.history = []
         self.current_phase = None
+        
+        self.state = {
+            "memory": [],
+            "completed_phases": [],
+            "current_phase": None
+        }
     
     def run(self, phase: str, **kwargs) -> Dict[str, Any]:
         """Run the agent for a specific phase.
@@ -214,48 +223,61 @@ Respond in a clear, concise, and helpful manner.
         """
         pass
     
-    def save_state(self, output_dir: str) -> None:
+    def save_state(self, output_dir: str) -> str:
         """Save the agent's state to a file.
         
         Args:
-            output_dir: The output directory
+            output_dir: Output directory to save the state file
+            
+        Returns:
+            str: Path to the saved state file
         """
-        os.makedirs(output_dir, exist_ok=True)
-        
+        # Create a state object
         state = {
             "model": self.model,
             "step_count": self.step_count,
             "history": self.history,
-            "current_phase": self.current_phase
+            "current_phase": self.current_phase,
+            "memory": self.state["memory"],
+            "completed_phases": self.state["completed_phases"]
         }
         
+        # Save the state to a file
         state_file = os.path.join(output_dir, f"{self.__class__.__name__}_state.json")
-        with open(state_file, 'w', encoding='utf-8') as f:
+        with open(state_file, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
         
-        self.logger.info(f"Agent state saved to {state_file}")
+        if self.logger:
+            self.logger.info(f"Agent state saved to {state_file}")
+        
+        return state_file
     
     def load_state(self, state_file: str) -> None:
         """Load the agent's state from a file.
         
         Args:
-            state_file: The state file path
+            state_file: Path to the state file
             
         Raises:
             FileNotFoundError: If the state file does not exist
         """
-        if not os.path.isfile(state_file):
+        if not os.path.exists(state_file):
             raise FileNotFoundError(f"State file not found: {state_file}")
         
-        with open(state_file, 'r', encoding='utf-8') as f:
+        # Load the state from the file
+        with open(state_file, "r", encoding="utf-8") as f:
             state = json.load(f)
         
+        # Restore the state
         self.model = state.get("model", self.model)
         self.step_count = state.get("step_count", 0)
         self.history = state.get("history", [])
         self.current_phase = state.get("current_phase")
+        self.state["memory"] = state.get("memory", [])
+        self.state["completed_phases"] = state.get("completed_phases", [])
         
-        self.logger.info(f"Agent state loaded from {state_file}")
+        if self.logger:
+            self.logger.info(f"Agent state loaded from {state_file}")
     
     def get_dialog(self) -> List[Dict[str, Any]]:
         """Get the agent's dialog history.
@@ -263,4 +285,137 @@ Respond in a clear, concise, and helpful manner.
         Returns:
             List[Dict[str, Any]]: The dialog history
         """
-        return self.history 
+        return self.history
+    
+    def add_to_memory(self, entry: Dict[str, Any]):
+        """Add an entry to the agent's memory.
+        
+        Args:
+            entry: Memory entry to add
+        """
+        self.state["memory"].append(entry)
+    
+    def get_memory(self) -> List[Dict[str, Any]]:
+        """Get the agent's memory.
+        
+        Returns:
+            List of memory entries
+        """
+        return self.state["memory"]
+    
+    def complete_phase(self, phase_name: str, task_notes: str) -> str:
+        """Complete a phase of the research workflow.
+        
+        Args:
+            phase_name: Name of the phase to complete
+            task_notes: Task notes for the phase
+            
+        Returns:
+            Output from completing the phase
+        """
+        if not self.llm:
+            logger.error("LLM interface not initialized")
+            return "ERROR: LLM interface not initialized"
+        
+        logger.info(f"Completing phase: {phase_name}")
+        self.state["current_phase"] = phase_name
+        
+        # Prepare the prompt
+        memory_str = ""
+        for entry in self.state["memory"]:
+            memory_str += f"- {entry.get('content', '')}\n"
+        
+        prompt = f"""You are a highly knowledgeable and experienced researcher working on a project.
+        
+Current phase: {phase_name}
+
+Task notes: {task_notes}
+
+Memory:
+{memory_str}
+
+Please complete this phase of the research workflow by providing a detailed and well-structured response.
+        """
+        
+        # Call the LLM
+        output = self.llm.generate(prompt)
+        
+        # Add to memory
+        self.add_to_memory({
+            "phase": phase_name,
+            "content": output,
+            "type": "phase_completion"
+        })
+        
+        # Mark as completed
+        self.state["completed_phases"].append(phase_name)
+        self.state["current_phase"] = None
+        
+        return output
+    
+    def analyze_literature(self, arxiv_papers: List[Dict[str, str]], 
+                           semantic_scholar_papers: List[Dict[str, Any]], 
+                           research_topic: str) -> str:
+        """Analyze literature for a research topic.
+        
+        Args:
+            arxiv_papers: List of papers from arXiv
+            semantic_scholar_papers: List of papers from Semantic Scholar
+            research_topic: Research topic to analyze
+            
+        Returns:
+            Analysis of the literature
+        """
+        if not self.llm:
+            logger.error("LLM interface not initialized")
+            return "ERROR: LLM interface not initialized"
+        
+        logger.info(f"Analyzing literature for: {research_topic}")
+        
+        # Format the papers for the prompt
+        arxiv_str = ""
+        for i, paper in enumerate(arxiv_papers, 1):
+            arxiv_str += f"Paper {i}:\n"
+            arxiv_str += f"Title: {paper.get('title', '')}\n"
+            arxiv_str += f"Authors: {', '.join(paper.get('authors', []))}\n"
+            arxiv_str += f"Summary: {paper.get('summary', '')[:500]}...\n\n"
+        
+        ss_str = ""
+        for i, paper in enumerate(semantic_scholar_papers, 1):
+            ss_str += f"Paper {i}:\n"
+            ss_str += f"Title: {paper.get('title', '')}\n"
+            ss_str += f"Authors: {', '.join(paper.get('authors', []))}\n"
+            ss_str += f"Abstract: {paper.get('abstract', '')[:500]}...\n\n"
+        
+        # Prepare the prompt
+        prompt = f"""You are a highly knowledgeable and experienced researcher working on a project.
+        
+Research topic: {research_topic}
+
+arXiv papers:
+{arxiv_str}
+
+Semantic Scholar papers:
+{ss_str}
+
+Please analyze this literature and provide a comprehensive literature review that:
+1. Identifies key themes and findings
+2. Summarizes the state of the field
+3. Identifies research gaps
+4. Suggests potential research directions
+5. Evaluates the methodologies used in the existing research
+
+Your analysis should be detailed, well-structured, and scholarly.
+        """
+        
+        # Call the LLM
+        output = self.llm.generate(prompt)
+        
+        # Add to memory
+        self.add_to_memory({
+            "phase": "literature-review",
+            "content": output,
+            "type": "literature_analysis"
+        })
+        
+        return output 

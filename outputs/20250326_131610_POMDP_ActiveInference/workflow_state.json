@@ -1,0 +1,13 @@
+{
+  "current_phase_idx": 7,
+  "phases": [
+    "literature-review",
+    "plan-formulation",
+    "data-preparation",
+    "code-implementation",
+    "running-experiments",
+    "results-interpretation",
+    "report-writing"
+  ],
+  "timestamp": "2025-03-26T13:25:37.280347"
+}

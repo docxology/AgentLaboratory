@@ -1,11 +1,18 @@
-"""Utility functions for the Agent Laboratory.
+"""Utility modules for Agent Laboratory.
 
-This module contains helper functions and utilities used across the Agent Laboratory.
+This package contains utility functions and classes used throughout the Agent Laboratory.
 """
 
-# Import utility functions as they are implemented
-# Examples:
-# from agent_lab.utils.file_utils import save_json, load_json
-# from agent_lab.utils.text_utils import sanitize_filename
+# Import legacy utilities
+from agent_lab.utils.legacy_utils import compile_latex, extract_prompt, count_tokens
+from agent_lab.utils.legacy_tools import execute_code, ArxivSearch, HFDataSearch, SemanticScholarSearch
 
-__all__ = []
+__all__ = [
+    "compile_latex",
+    "extract_prompt",
+    "count_tokens",
+    "execute_code",
+    "ArxivSearch",
+    "HFDataSearch",
+    "SemanticScholarSearch",
+]

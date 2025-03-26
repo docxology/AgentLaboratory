@@ -1,9 +1,10 @@
-"""
-Configuration module for the Agent Laboratory.
+"""Configuration management for the Agent Laboratory."""
 
-This module provides configuration handling for the Agent Laboratory.
-"""
+from agent_lab.config.loader import load_config, load_from_yaml, load_from_args, load_from_env
 
-from agent_lab.config.config_loader import ConfigLoader, load_config
-
-__all__ = ["ConfigLoader", "load_config"]
+__all__ = [
+    "load_config",
+    "load_from_yaml",
+    "load_from_args",
+    "load_from_env"
+]
