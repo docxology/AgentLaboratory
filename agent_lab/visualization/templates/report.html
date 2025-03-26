@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Research Report: {{ research_topic }}{% endblock %}
+
+{% block header %}Research Report{% endblock %}
+
+{% block content %}
+<div class="report-metadata">
+    <h1>{{ research_topic }}</h1>
+    <p><strong>Started:</strong> {{ started_at }}</p>
+</div>
+
+<div class="report-summary">
+    <h2>Experiment Summary</h2>
+    
+    <div class="metrics-section">
+        <h3>Metrics Overview</h3>
+        
+        {% if metrics and metrics.experiment %}
+        <table class="metrics-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in metrics.experiment.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No experiment metrics available.</p>
+        {% endif %}
+    </div>
+    
+    <div class="phases-section">
+        <h3>Research Phases</h3>
+        
+        {% if metrics and metrics.phases %}
+        <table class="metrics-table">
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Status</th>
+                    <th>Duration (s)</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for phase, data in metrics.phases.items() %}
+                <tr>
+                    <td>{{ phase }}</td>
+                    <td>{{ data.status if data.status else "Unknown" }}</td>
+                    <td>{{ "%.2f"|format(data.duration) if data.duration else "N/A" }}</td>
+                    <td>{{ data.steps if data.steps else 0 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No phase metrics available.</p>
+        {% endif %}
+    </div>
+    
+    <div class="visualizations-section">
+        <h3>Visualizations</h3>
+        
+        {% if phase_durations_plot %}
+        <div class="visualization">
+            <h4>Phase Durations</h4>
+            <img src="{{ phase_durations_plot }}" alt="Phase Durations" />
+        </div>
+        {% endif %}
+        
+        {% if phase_steps_plot %}
+        <div class="visualization">
+            <h4>Steps per Phase</h4>
+            <img src="{{ phase_steps_plot }}" alt="Steps per Phase" />
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="report-content">
+    <h2>Research Report</h2>
+    
+    {% if report_content %}
+    <div class="markdown-content">
+        {{ report_content|safe }}
+    </div>
+    {% else %}
+    <p>No research report content available.</p>
+    {% endif %}
+</div>
+{% endblock %} 
